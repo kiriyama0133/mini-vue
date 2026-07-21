@@ -1,0 +1,1 @@
+Object.defineProperty(exports,Symbol.toStringTag,{value:`Module`});function e(e,t){console.log(`${e+t}`)}exports.effect=e;
