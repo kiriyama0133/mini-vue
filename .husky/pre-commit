@@ -1,2 +1,2 @@
-pnpm exec prettier --write .
+npx lint-staged
 git add .
