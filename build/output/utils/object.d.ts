@@ -1,1 +1,1 @@
-export declare function isPlainObject(value: Object): boolean;
+export declare function isObject(value: any): boolean;

@@ -1,5 +1,5 @@
 // dependences collect
-import { isPlainObject } from '../utils/object';
+import { isObject } from '../utils/object';
 import type { ReactiveMap } from '../types/global';
 import { activeEffect } from '../effect';
 import type { ReactiveEffect } from '../effect';
@@ -15,7 +15,7 @@ const mutableHandlers: ProxyHandler<any> = {
     // effect track
     track(target, key);
     let result = Reflect.get(target, key, receiver);
-    if (isPlainObject(result)) {
+    if (isObject(result)) {
       result = createReactiveObject(result);
     }
     return result;
@@ -42,6 +42,11 @@ export function isReactive(value: unknown): boolean {
 export function reactive<T extends object>(target: T): T {
   return createReactiveObject(target as object);
 }
+/**
+ * 依赖收集
+ * @param target 目标对象
+ * @param key 目标对象的属性名
+ */
 export function track(target: object, key: string | symbol) {
   if (!activeEffect) return;
   let depsMap = targetMap.get(target);
@@ -50,21 +55,34 @@ export function track(target: object, key: string | symbol) {
   }
   let dep = depsMap.get(key);
   if (!dep) {
-    depsMap.set(key, (dep = new Set<ReactiveEffect>()));
+    depsMap.set(key, (dep = new Set()));
   }
-  if (!dep.has(activeEffect)) {
-    dep.add(activeEffect);
-    activeEffect.deps.push(dep);
+  trackEffects(dep);
+}
+/**
+ * 依赖收集
+ * @param dep 依赖集合
+ */
+export function trackEffects(dep: Set<ReactiveEffect>) {
+  if (dep.has(activeEffect!)) {
+    return;
   }
+  dep.add(activeEffect!);
+  activeEffect!.deps.push(dep);
 }
 function createReactiveObject(target: object) {
-  if (!isPlainObject(target)) return target;
+  if (!isObject(target)) return target;
   if (reactiveMap.has(target)) return reactiveMap.get(target);
   let proxy = new Proxy(target, mutableHandlers);
   reactiveMap.set(target, proxy);
   return proxy;
 }
-function trigger(target: object, key: string | symbol) {
+/**
+ * 触发依赖
+ * @param target 目标对象
+ * @param key 目标对象的属性名
+ */
+export function trigger(target: object, key: string | symbol) {
   const depsMap = targetMap.get(target);
   if (!depsMap) return;
   const dep = depsMap.get(key);
@@ -72,6 +90,14 @@ function trigger(target: object, key: string | symbol) {
   if (!dep) return;
   const effects = new Set(dep);
   console.log('[execute]', effects);
+  triggerEffects(dep);
+}
+/**
+ * 触发依赖
+ * @param dep 依赖集合
+ */
+export function triggerEffects(dep: Set<ReactiveEffect>) {
+  const effects = new Set(dep);
   effects.forEach((effect) => {
     if (effect !== activeEffect) {
       if (effect.scheduler) {
@@ -86,4 +112,12 @@ function trigger(target: object, key: string | symbol) {
       }
     }
   });
+}
+/**
+ * 转换为响应式对象
+ * @param value 原始值
+ * @returns 响应式对象
+ */
+export function toReactive<T>(value: T): T {
+  return isObject(value) ? createReactiveObject(value as object) : value;
 }
