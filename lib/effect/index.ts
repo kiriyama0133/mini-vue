@@ -1,3 +1,6 @@
+//lib/effect/index.ts
+import { DirtyLevels } from './computed';
+
 export function effect(fn: () => void, options?: object) {
   const _effect = new ReactiveEffect(fn, () => {
     _effect.run();
@@ -17,11 +20,19 @@ export class ReactiveEffect {
   public active = true;
   public deps: Dep[] = []; // deps from this ReactiveEffect used
   public running = 0;
+  public dirtyLevel = DirtyLevels.Dirty;
   constructor(
     public fn: () => void,
     public scheduler?: () => void
   ) {}
+  public get dirty() {
+    return this.dirtyLevel === DirtyLevels.Dirty;
+  }
+  public set dirty(value: boolean) {
+    this.dirtyLevel = value ? DirtyLevels.Dirty : DirtyLevels.NoDirty;
+  }
   run() {
+    this.dirtyLevel = DirtyLevels.NoDirty;
     this.executeCount++;
     if (!this.active) return this.fn();
     cleanupEffect(this);
