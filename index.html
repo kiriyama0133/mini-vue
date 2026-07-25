@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="app">
+            <h1 id="name"></h1>
+        </div>
+    </body>
+    <script type="module">
+        import { reactive, effect } from './build/output/vue-mini.es.js'
+
+        const name = document.getElementById('name')
+        let obj = reactive({ name: 'kiriyama', age: 22 })
+        effect(() => {
+            name.innerHTML = `${obj.name} ${obj.age}`
+            console.log(obj.name)
+        })
+        setTimeout(() => {
+            obj.name = 'kiriyama2'
+            obj.age = 23
+        }, 2000);
+    </script>
+</html>

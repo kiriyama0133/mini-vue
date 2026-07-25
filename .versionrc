@@ -1,0 +1,14 @@
+{
+  "header": "# 更新日志\n\n所有版本的重大变更和更新记录将在此列出。\n",
+  "types": [
+    { "type": "feat", "section": "✨ 新特性 (Features)" },
+    { "type": "fix", "section": "🐛 修复 BUG (Bug Fixes)" },
+    { "type": "perf", "section": "⚡ 性能优化 (Performance)" },
+    { "type": "revert", "section": "⏪ 撤销提交 (Reverts)" },
+    { "type": "docs", "section": "📝 文档更新 (Documentation)", "hidden": false },
+    { "type": "style", "section": "💄 代码样式 (Styles)", "hidden": true },
+    { "type": "refactor", "section": "♻️ 重构 (Refactoring)", "hidden": true },
+    { "type": "test", "section": "✅ 测试 (Tests)", "hidden": true },
+    { "type": "chore", "section": "🚀 构建/工具 (Chores)", "hidden": true }
+  ]
+}
