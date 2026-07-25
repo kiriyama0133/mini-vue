@@ -169,7 +169,55 @@ function T(e) {
   });
 }
 //#endregion
+//#region lib/effect/computed.ts
+var E = /* @__PURE__ */ (function (e) {
+  return ((e[(e.Dirty = 4)] = 'Dirty'), (e[(e.NoDirty = 0)] = 'NoDirty'), e);
+})({});
+function D(e) {
+  return typeof e == 'function' ? new O(e, void 0) : new O(e.get, e.set);
+}
+var O = class {
+  getter;
+  setter;
+  __v_isRef = !0;
+  dep;
+  dirtyLevel = E.Dirty;
+  _value;
+  effect;
+  constructor(e, t) {
+    ((this.getter = e),
+      (this.setter = t),
+      (this.effect = new i(this.getter, () => {
+        ((this.dirtyLevel = E.Dirty), A(this));
+      })));
+  }
+  set dirty(e) {
+    this.dirtyLevel = e ? E.Dirty : E.NoDirty;
+  }
+  get dirty() {
+    return this.dirtyLevel === E.Dirty;
+  }
+  get value() {
+    return (
+      k(this),
+      this.dirtyLevel === E.Dirty &&
+        ((this._value = this.effect.run()), (this.dirtyLevel = E.NoDirty)),
+      this._value
+    );
+  }
+  set value(e) {
+    this.setter ? this.setter?.call(this, e) : console.warn('computed ref is readonly');
+  }
+};
+function k(e) {
+  n && ((e.dep ||= /* @__PURE__ */ new Set()), d(e.dep));
+}
+function A(e) {
+  e.dep && m(e.dep);
+}
+//#endregion
 export {
+  D as computed,
   t as effect,
   x as isRef,
   T as proxyRefs,

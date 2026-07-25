@@ -11,17 +11,34 @@
         </div>
     </body>
     <script type="module">
-        import { reactive, effect, ref } from './build/output/vue-mini.es.js'
+        import { reactive, effect, ref,computed } from './build/output/vue-mini.es.js'
+        // const count = ref(1)
+        // const object = reactive({
+        //     name: 'minivue',
+        //     age: 18
+        // })
 
-        const name = document.getElementById('name')
-        let obj = reactive({ name: 'kiriyama', age: 22 })
-        effect(() => {
-            name.innerHTML = `${obj.name} ${obj.age}`
-            console.log(obj.name)
-        })
-        setTimeout(() => {
-            obj.name = 'kiriyama2'
-            obj.age = 23
-        }, 2000);
+        // const objectRef = computed({
+        // get() {
+        //     console.log('get')
+        //     return object
+        // },
+        // set(newValue) {
+        //     if(newValue.name){
+        //         object.name = newValue.name
+        //     }
+        //     if(newValue.age){
+        //         object.age = newValue.age
+        //     }
+        // }
+        // })
+        // console.log(objectRef.value.name)
+
+        // objectRef.value = {
+        // name:'minivue2',
+        // age:20
+        // }
+
+        // console.log(objectRef.value.name)
     </script>
 </html>

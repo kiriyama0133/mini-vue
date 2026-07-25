@@ -15,32 +15,24 @@ export function cleanupEffect(effect: ReactiveEffect) {
   deps.forEach((dep) => dep.delete(effect));
   deps.length = 0;
 }
-export class ReactiveEffect {
+export class ReactiveEffect<T = any> {
   public executeCount = 0;
   public active = true;
   public deps: Dep[] = []; // deps from this ReactiveEffect used
   public running = 0;
-  public dirtyLevel = DirtyLevels.Dirty;
   constructor(
-    public fn: () => void,
+    public fn: () => T,
     public scheduler?: () => void
   ) {}
-  public get dirty() {
-    return this.dirtyLevel === DirtyLevels.Dirty;
-  }
-  public set dirty(value: boolean) {
-    this.dirtyLevel = value ? DirtyLevels.Dirty : DirtyLevels.NoDirty;
-  }
-  run() {
-    this.dirtyLevel = DirtyLevels.NoDirty;
+  run(): T {
     this.executeCount++;
-    if (!this.active) return this.fn();
+    if (!this.active) return this.fn() as T;
     cleanupEffect(this);
     let lastActiveEffect = activeEffect;
     try {
       this.running++;
       activeEffect = this;
-      return this.fn();
+      return this.fn() as T;
     } finally {
       this.running--;
       activeEffect = lastActiveEffect;
