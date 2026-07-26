@@ -1,8 +1,9 @@
 //lib/effect/watch.ts
 
-import { Ref } from '../ref';
+import { isRef, Ref } from '../ref';
 import { ReactiveEffect } from '.';
 import { effect } from '.';
+import { isReactive } from '../reactivity';
 
 export type WatchSource<T = any> = (() => T) | Ref<T> | object;
 export interface WatchOptions {
@@ -17,19 +18,51 @@ export function watch<T>(
 ) {
   doWatch(source, cb, options);
 }
+export function watchEffect(fn: (onCleanup: (cb: () => void) => void) => void) {
+  let cleanup: (() => void) | undefined;
+  const onCleanup = (cb: () => void) => {
+    cleanup = cb;
+  };
+  let effect: ReactiveEffect;
+  const runner = () => {
+    cleanup?.();
+    cleanup = undefined;
+    fn(onCleanup);
+  };
+  effect = new ReactiveEffect(
+    () => {
+      runner();
+    },
+    () => {
+      effect.run();
+    }
+  );
+  effect.run();
+}
+
 function doWatch<T>(
   source: WatchSource<T>,
   cb: (newValue: T, oldValue: T | undefined) => void,
   options?: WatchOptions
 ) {
   const reacitveGetter = (source: any) => traverse(source, options?.deep ? 1 : undefined);
-  let getter = () => reacitveGetter(source);
+  let getter: () => any;
+  if (isRef(source)) {
+    getter = () => source.value;
+  } else if (isReactive(source)) {
+    getter = () => reacitveGetter(source);
+  } else {
+    getter = () => source;
+  }
   let oldValue: T | undefined;
   const job = () => {
     const newValue = effect.run();
     cb(newValue, oldValue);
     oldValue = newValue;
   };
+  if (options?.immediate) {
+    job();
+  }
   const effect = new ReactiveEffect(getter, job);
   oldValue = effect.run();
 }

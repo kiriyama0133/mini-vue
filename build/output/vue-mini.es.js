@@ -216,6 +216,27 @@ function A(e) {
   e.dep && m(e.dep);
 }
 //#endregion
+//#region lib/effect/watch.ts
+function j(e, t, n) {
+  M(e, t, n);
+}
+function M(e, t, n) {
+  let r = (e) => N(e, n?.deep ? 1 : void 0),
+    a = () => r(e),
+    o,
+    s = new i(a, () => {
+      let e = s.run();
+      (t(e, o), (o = e));
+    });
+  o = s.run();
+}
+function N(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
+  if (typeof e != 'object' || !e || (t !== void 0 && n >= t) || r.has(e)) return e;
+  r.add(e);
+  for (let i in e) N(e[i], t, n + 1, r);
+  return e;
+}
+//#endregion
 export {
   D as computed,
   t as effect,
@@ -225,4 +246,5 @@ export {
   g as ref,
   C as toRef,
   w as toRefs,
+  j as watch,
 };

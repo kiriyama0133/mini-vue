@@ -11,7 +11,7 @@
         </div>
     </body>
     <script type="module">
-        import { reactive, effect, ref,computed } from './build/output/vue-mini.es.js'
+        import { reactive, effect, ref,computed, watch } from './build/output/vue-mini.es.js'
         // const count = ref(1)
         // const object = reactive({
         //     name: 'minivue',
@@ -40,5 +40,13 @@
         // }
 
         // console.log(objectRef.value.name)
+        const obj = reactive({
+            name:'minivue',
+            age:18
+        })
+        watch(obj, (newVal, oldVal) => {
+            console.log('watch', newVal, oldVal)
+        })
+        obj.name = 'minivue2'
     </script>
 </html>

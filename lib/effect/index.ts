@@ -6,7 +6,8 @@ export function effect(fn: () => void, options?: object) {
     _effect.run();
   });
   _effect.run();
-  return _effect;
+  const runner = _effect.run.bind(_effect);
+  return runner;
 }
 export let activeEffect: ReactiveEffect | undefined = undefined;
 export type Dep = Set<ReactiveEffect>;

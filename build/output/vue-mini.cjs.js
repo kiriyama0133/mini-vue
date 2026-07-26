@@ -209,6 +209,25 @@ function k(e) {
 function A(e) {
   e.dep && m(e.dep);
 }
+function j(e, t, n) {
+  M(e, t, n);
+}
+function M(e, t, n) {
+  let r = (e) => N(e, n?.deep ? 1 : void 0),
+    a = () => r(e),
+    o,
+    s = new i(a, () => {
+      let e = s.run();
+      (t(e, o), (o = e));
+    });
+  o = s.run();
+}
+function N(e, t, n = 0, r = new Set()) {
+  if (typeof e != `object` || !e || (t !== void 0 && n >= t) || r.has(e)) return e;
+  r.add(e);
+  for (let i in e) N(e[i], t, n + 1, r);
+  return e;
+}
 ((exports.computed = D),
   (exports.effect = t),
   (exports.isRef = x),
@@ -216,4 +235,5 @@ function A(e) {
   (exports.reactive = l),
   (exports.ref = g),
   (exports.toRef = C),
-  (exports.toRefs = w));
+  (exports.toRefs = w),
+  (exports.watch = j));
