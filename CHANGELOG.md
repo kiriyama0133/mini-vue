@@ -2,6 +2,13 @@
 
 所有版本的重大变更和更新记录将在此列出。
 
+## [1.3.0](https://github.com/kiriyama0133/mini-vue/compare/v1.2.0...v1.3.0) (2026-07-27)
+
+### ✨ 新特性 (Features)
+
+- implement the runtime-dom module excluding the function CreateRednerer ([da5be4d](https://github.com/kiriyama0133/mini-vue/commit/da5be4dbf8139ad1e38b0592bacfe9c11a500497))
+- improve runtime-dom module implementaion ([ba349c3](https://github.com/kiriyama0133/mini-vue/commit/ba349c3cc8c434c38b29c0bb8c6ae12f4c3e00b5))
+
 ## [1.2.0](https://github.com/kiriyama0133/mini-vue/compare/v1.1.0...v1.2.0) (2026-07-26)
 
 ### 📝 文档更新 (Documentation)
