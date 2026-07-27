@@ -2,7 +2,6 @@
 
 import { isRef, Ref } from '../ref';
 import { ReactiveEffect } from '.';
-import { effect } from '.';
 import { isReactive } from '../reactivity';
 
 export type WatchSource<T = any> = (() => T) | Ref<T> | object;

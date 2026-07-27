@@ -1,4 +1,4 @@
-export declare function effect(fn: () => void, options?: object): ReactiveEffect<void>;
+export declare function effect(fn: () => void, options?: object): () => void;
 export declare let activeEffect: ReactiveEffect | undefined;
 export type Dep = Set<ReactiveEffect>;
 export declare function cleanupEffect(effect: ReactiveEffect): void;

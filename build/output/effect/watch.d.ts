@@ -10,3 +10,4 @@ export declare function watch<T>(
   cb: (newValue: T, oldValue: T | undefined) => void,
   options?: object
 ): void;
+export declare function watchEffect(fn: (onCleanup: (cb: () => void) => void) => void): void;
