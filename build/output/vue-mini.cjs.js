@@ -237,7 +237,7 @@ function P(e, t, n = 0, r = new Set()) {
 var F = {
   createElement: I,
   createText: L,
-  intsert: R,
+  insert: R,
   remove: z,
   setElementText: B,
   setText: V,

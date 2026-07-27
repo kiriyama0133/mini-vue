@@ -4,7 +4,7 @@ declare const renderOptions: {
 } & {
   createElement: (tag: string) => import('./nodeOps').MiniElement;
   createText: (text: string) => import('./nodeOps').MiniText;
-  intsert: (
+  insert: (
     child: import('./nodeOps').MiniNode,
     parent: import('./nodeOps').MiniNode,
     anchor?: import('./nodeOps').MiniNode | null

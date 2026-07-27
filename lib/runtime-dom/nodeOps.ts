@@ -8,7 +8,7 @@ import type { Invoker } from './event';
 export const nodeOps = {
   createElement,
   createText,
-  intsert,
+  insert,
   remove,
   setElementText,
   setText,
@@ -30,7 +30,7 @@ function createElement(tag: string): MiniElement {
 function createText(text: string): MiniText {
   return document.createTextNode(text) as MiniText;
 }
-function intsert(child: MiniNode, parent: MiniNode, anchor?: MiniNode | null) {
+function insert(child: MiniNode, parent: MiniNode, anchor?: MiniNode | null) {
   parent.insertBefore(child, anchor || null);
 }
 function remove(child: MiniNode) {

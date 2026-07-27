@@ -5,7 +5,7 @@ import { Invoker } from './event';
 export declare const nodeOps: {
   createElement: typeof createElement;
   createText: typeof createText;
-  intsert: typeof intsert;
+  insert: typeof insert;
   remove: typeof remove;
   setElementText: typeof setElementText;
   setText: typeof setText;
@@ -23,7 +23,7 @@ export type MiniElement = HTMLElement & {
 export type MiniText = Text & {};
 declare function createElement(tag: string): MiniElement;
 declare function createText(text: string): MiniText;
-declare function intsert(child: MiniNode, parent: MiniNode, anchor?: MiniNode | null): void;
+declare function insert(child: MiniNode, parent: MiniNode, anchor?: MiniNode | null): void;
 declare function remove(child: MiniNode): void;
 declare function setElementText(el: MiniElement, text: string): void;
 declare function setText(node: MiniText, text: string): void;

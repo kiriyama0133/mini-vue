@@ -7,11 +7,12 @@
     </head>
     <body>
         <div id="app">
-            <h1 id="name"></h1>
         </div>
     </body>
     <script type="module">
-        import { reactive, effect, ref,computed, watch } from './build/output/vue-mini.es.js'
+        import { renderOptions } from './build/output/vue-mini.es.js'
+        import { createRenderer, render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
+        {
         // const count = ref(1)
         // const object = reactive({
         //     name: 'minivue',
@@ -40,13 +41,22 @@
         // }
 
         // console.log(objectRef.value.name)
-        const obj = reactive({
-            name:'minivue',
-            age:18
-        })
-        watch(obj, (newVal, oldVal) => {
-            console.log('watch', newVal, oldVal)
-        })
-        obj.name = 'minivue2'
+        // const obj = reactive({
+        //     name:'minivue',
+        //     age:18
+        // })
+        // watch(obj, (newVal, oldVal) => {
+        //     console.log('watch', newVal, oldVal)
+        // })
+        // obj.name = 'minivue2'
+    }
+        let element = h("h1",{
+            style: {"color":"red"},
+            class: 'abc', 
+            onClick: () => {
+            alert(1)
+        }}, "hello minivue")
+        const renderer = createRenderer(renderOptions)
+        renderer.render(element, document.getElementById("app"))
     </script>
 </html>

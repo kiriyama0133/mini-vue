@@ -19,7 +19,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@vue/reactivity": "^3.5.40"
+    "@vue/reactivity": "^3.5.40",
+    "@vue/runtime-dom": "^3.5.40"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",

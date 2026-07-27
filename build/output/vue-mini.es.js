@@ -247,7 +247,7 @@ function P(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
 var F = {
   createElement: I,
   createText: L,
-  intsert: R,
+  insert: R,
   remove: z,
   setElementText: B,
   setText: V,
