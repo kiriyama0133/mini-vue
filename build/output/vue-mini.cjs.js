@@ -318,7 +318,35 @@ function Y(e, t, n, r) {
   }
 }
 var X = Object.assign({ patchProp: Y }, F);
+function Z(e) {
+  let {
+      createElement: t,
+      createText: n,
+      insert: r,
+      remove: i,
+      setElementText: a,
+      setText: o,
+      parentNode: s,
+      nextSibling: c,
+      patchProp: l,
+    } = e,
+    u = (e, n) => {
+      let { type: i, props: o, children: s } = e,
+        c = t(i);
+      if ((r(c, n), o)) for (let e in o) l(c, e, null, o[e]);
+      (a(c, s), console.log(`[mountElement<VNode>]`, e));
+    },
+    d = (e, t, n) => {
+      e != t && e === null && u(t, n);
+    };
+  return {
+    render: (e, t) => {
+      (d(t._vnode || null, e, t), (t._vnode = e));
+    },
+  };
+}
 ((exports.computed = O),
+  (exports.createRenderer = Z),
   (exports.effect = t),
   (exports.isRef = S),
   (exports.proxyRefs = E),

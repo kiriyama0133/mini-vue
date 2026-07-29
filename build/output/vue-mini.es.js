@@ -341,8 +341,38 @@ function Y(e, t, n, r) {
 //#region lib/runtime-dom/index.ts
 var X = Object.assign({ patchProp: Y }, F);
 //#endregion
+//#region lib/runtime-core/index.ts
+function Z(e) {
+  let {
+      createElement: t,
+      createText: n,
+      insert: r,
+      remove: i,
+      setElementText: a,
+      setText: o,
+      parentNode: s,
+      nextSibling: c,
+      patchProp: l,
+    } = e,
+    u = (e, n) => {
+      let { type: i, props: o, children: s } = e,
+        c = t(i);
+      if ((r(c, n), o)) for (let e in o) l(c, e, null, o[e]);
+      (a(c, s), console.log('[mountElement<VNode>]', e));
+    },
+    d = (e, t, n) => {
+      e != t && e === null && u(t, n);
+    };
+  return {
+    render: (e, t) => {
+      (d(t._vnode || null, e, t), (t._vnode = e));
+    },
+  };
+}
+//#endregion
 export {
   O as computed,
+  Z as createRenderer,
   t as effect,
   S as isRef,
   E as proxyRefs,
