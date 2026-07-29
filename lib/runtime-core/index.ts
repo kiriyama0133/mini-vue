@@ -1,7 +1,9 @@
 //lib/runtime-core/index.ts
 import { renderOptions } from '../runtime-dom';
-import { VNode, Container } from './vnode';
+import { VNode, Container, VNodeChildren } from './vnode';
+import { ShapeFlags } from '../shared/shapeFlags';
 
+export { h } from './h';
 export function createRenderer(RenderOptions: typeof renderOptions) {
   const {
     createElement: hostCreateElement,
@@ -14,8 +16,15 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     nextSibling: hostNextSibling,
     patchProp: hostPatchProp,
   } = RenderOptions;
+  const mountChildren = (children: VNodeChildren, parent: Container) => {
+    if (Array.isArray(children)) {
+      for (const child of children) {
+        mountElement(child, parent);
+      }
+    }
+  };
   const mountElement = (vnode: VNode, container: Container) => {
-    const { type, props, children } = vnode;
+    const { type, props, children, shapeFlag } = vnode;
     let el = hostCreateElement(type);
     hostInsert(el, container);
     if (props) {
@@ -23,7 +32,13 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         hostPatchProp(el, key, null, props[key]);
       }
     }
-    hostSetElementText(el, children as string);
+    // 9 & 8 > 0 text_children
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      hostSetElementText(el, children as string);
+    } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+      mountChildren(children, el);
+    }
+
     console.log('[mountElement<VNode>]', vnode);
 
     // const el = hostCreateElement(vnode.type);

@@ -2,20 +2,23 @@
 function e(e) {
   return typeof e == 'object' && !!e;
 }
+function t(e) {
+  return typeof e == 'string';
+}
 //#endregion
 //#region lib/effect/index.ts
-function t(e, t) {
-  let n = new i(e, () => {
+function n(e, t) {
+  let n = new a(e, () => {
     n.run();
   });
   return (n.run(), n.run.bind(n));
 }
-var n = void 0;
-function r(e) {
+var r = void 0;
+function i(e) {
   let t = e.deps;
   (t.forEach((t) => t.delete(e)), (t.length = 0));
 }
-var i = class {
+var a = class {
     fn;
     scheduler;
     executeCount = 0;
@@ -27,36 +30,36 @@ var i = class {
     }
     run() {
       if ((this.executeCount++, !this.active)) return this.fn();
-      r(this);
-      let e = n;
+      i(this);
+      let e = r;
       try {
-        return (this.running++, (n = this), this.fn());
+        return (this.running++, (r = this), this.fn());
       } finally {
-        (this.running--, (n = e));
+        (this.running--, (r = e));
       }
     }
     stop() {
-      this.active &&= (r(this), !1);
+      this.active &&= (i(this), !1);
     }
   },
-  a = /* @__PURE__ */ new WeakMap(),
   o = /* @__PURE__ */ new WeakMap(),
-  s = {
+  s = /* @__PURE__ */ new WeakMap(),
+  c = {
     get(t, n, r) {
-      if (n === c.IS_REACTIVE) return !0;
-      if (n === c.IS_READONLY) return !1;
-      if (n === c.RAW) return t;
-      d(t, n);
+      if (n === l.IS_REACTIVE) return !0;
+      if (n === l.IS_READONLY) return !1;
+      if (n === l.RAW) return t;
+      f(t, n);
       let i = Reflect.get(t, n, r);
-      return (e(i) && (i = p(i)), i);
+      return (e(i) && (i = m(i)), i);
     },
     set(e, t, n, r) {
       if (Reflect.get(e, t, r) === n) return !1;
       let i = Reflect.set(e, t, n, r);
-      return (i && m(e, t), i);
+      return (i && h(e, t), i);
     },
   },
-  c = /* @__PURE__ */ (function (e) {
+  l = /* @__PURE__ */ (function (e) {
     return (
       (e.IS_REACTIVE = '__v_isReactive'),
       (e.IS_READONLY = '__v_isReadonly'),
@@ -64,77 +67,77 @@ var i = class {
       e
     );
   })({});
-function l(e) {
-  return !!(e && e[c.IS_REACTIVE]);
-}
 function u(e) {
-  return p(e);
+  return !!(e && e[l.IS_REACTIVE]);
 }
-function d(e, t) {
-  if (!n) return;
-  let r = o.get(e);
-  r || o.set(e, (r = /* @__PURE__ */ new Map()));
-  let i = r.get(t);
-  (i || r.set(t, (i = /* @__PURE__ */ new Set())), f(i));
+function d(e) {
+  return m(e);
 }
-function f(e) {
-  e.has(n) || (e.add(n), n.deps.push(e));
+function f(e, t) {
+  if (!r) return;
+  let n = s.get(e);
+  n || s.set(e, (n = /* @__PURE__ */ new Map()));
+  let i = n.get(t);
+  (i || n.set(t, (i = /* @__PURE__ */ new Set())), p(i));
 }
-function p(t) {
+function p(e) {
+  e.has(r) || (e.add(r), r.deps.push(e));
+}
+function m(t) {
   if (!e(t)) return t;
-  if (a.has(t)) return a.get(t);
-  let n = new Proxy(t, s);
-  return (a.set(t, n), n);
+  if (o.has(t)) return o.get(t);
+  let n = new Proxy(t, c);
+  return (o.set(t, n), n);
 }
-function m(e, t) {
-  let n = o.get(e);
+function h(e, t) {
+  let n = s.get(e);
   if (!n) return;
   let r = n.get(t);
   if ((console.log('[trigger]', t, r), !r)) return;
   let i = new Set(r);
-  (console.log('[execute]', i), h(r));
+  (console.log('[execute]', i), g(r));
 }
-function h(e) {
+function g(e) {
   new Set(e).forEach((e) => {
-    e !== n && (e.scheduler ? e.running || e.scheduler() : e.run());
+    e !== r && (e.scheduler ? e.running || e.scheduler() : e.run());
   });
 }
-function g(t) {
-  return e(t) ? p(t) : t;
+function _(t) {
+  return e(t) ? m(t) : t;
 }
 //#endregion
 //#region lib/ref/index.ts
-function _(e) {
-  return v(e);
-}
 function v(e) {
-  return new y(e);
+  return y(e);
 }
-var y = class {
+function y(e) {
+  return new b(e);
+}
+var b = class {
   rawValue;
   __v_isRef = !0;
   _value;
   dep;
   constructor(e) {
-    ((this.rawValue = e), (this._value = g(e)));
+    ((this.rawValue = e), (this._value = _(e)));
   }
   get value() {
-    return (b(this), this._value);
+    return (x(this), this._value);
   }
   set value(e) {
-    ((this.rawValue = e), (this._value = g(e)), x(this));
+    ((this.rawValue = e), (this._value = _(e)), S(this));
   }
 };
-function b(e) {
-  n && ((e.dep ||= /* @__PURE__ */ new Set()), f(e.dep));
-}
 function x(e) {
-  e.dep && h(e.dep);
+  r && ((e.dep ||= /* @__PURE__ */ new Set()), p(e.dep));
 }
 function S(e) {
+  e.dep && g(e.dep);
+}
+function C(e) {
   return !!(e && e.__v_isRef);
 }
-var C = class {
+var w = class {
   _object;
   _key;
   constructor(e, t) {
@@ -148,63 +151,63 @@ var C = class {
     this._object[this._key] = e;
   }
 };
-function w(e, t) {
-  return new C(e, t);
+function T(e, t) {
+  return new w(e, t);
 }
-function T(e) {
+function E(e) {
   let t = {};
   for (let n in e) {
     let r = n;
-    t[r] = new C(e, r);
+    t[r] = new w(e, r);
   }
   return t;
 }
-function E(e) {
+function D(e) {
   return new Proxy(e, {
     get(e, t, n) {
       let r = Reflect.get(e, t, n);
-      return S(r) ? r.value : r;
+      return C(r) ? r.value : r;
     },
     set(e, t, n, r) {
       let i = Reflect.get(e, t, r);
-      return S(i) && !S(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
+      return C(i) && !C(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
     },
   });
 }
 //#endregion
 //#region lib/effect/computed.ts
-var D = /* @__PURE__ */ (function (e) {
+var O = /* @__PURE__ */ (function (e) {
   return ((e[(e.Dirty = 4)] = 'Dirty'), (e[(e.NoDirty = 0)] = 'NoDirty'), e);
 })({});
-function O(e) {
-  return typeof e == 'function' ? new k(e, void 0) : new k(e.get, e.set);
+function k(e) {
+  return typeof e == 'function' ? new A(e, void 0) : new A(e.get, e.set);
 }
-var k = class {
+var A = class {
   getter;
   setter;
   __v_isRef = !0;
   dep;
-  dirtyLevel = D.Dirty;
+  dirtyLevel = O.Dirty;
   _value;
   effect;
   constructor(e, t) {
     ((this.getter = e),
       (this.setter = t),
-      (this.effect = new i(this.getter, () => {
-        ((this.dirtyLevel = D.Dirty), j(this));
+      (this.effect = new a(this.getter, () => {
+        ((this.dirtyLevel = O.Dirty), M(this));
       })));
   }
   set dirty(e) {
-    this.dirtyLevel = e ? D.Dirty : D.NoDirty;
+    this.dirtyLevel = e ? O.Dirty : O.NoDirty;
   }
   get dirty() {
-    return this.dirtyLevel === D.Dirty;
+    return this.dirtyLevel === O.Dirty;
   }
   get value() {
     return (
-      A(this),
-      this.dirtyLevel === D.Dirty &&
-        ((this._value = this.effect.run()), (this.dirtyLevel = D.NoDirty)),
+      j(this),
+      this.dirtyLevel === O.Dirty &&
+        ((this._value = this.effect.run()), (this.dirtyLevel = O.NoDirty)),
       this._value
     );
   }
@@ -212,58 +215,58 @@ var k = class {
     this.setter ? this.setter?.call(this, e) : console.warn('computed ref is readonly');
   }
 };
-function A(e) {
-  n && ((e.dep ||= /* @__PURE__ */ new Set()), f(e.dep));
-}
 function j(e) {
-  e.dep && h(e.dep);
+  r && ((e.dep ||= /* @__PURE__ */ new Set()), p(e.dep));
+}
+function M(e) {
+  e.dep && g(e.dep);
 }
 //#endregion
 //#region lib/effect/watch.ts
-function M(e, t, n) {
-  N(e, t, n);
-}
 function N(e, t, n) {
-  let r = (e) => P(e, n?.deep ? 1 : void 0),
-    a;
-  a = S(e) ? () => e.value : l(e) ? () => r(e) : () => e;
+  P(e, t, n);
+}
+function P(e, t, n) {
+  let r = (e) => F(e, n?.deep ? 1 : void 0),
+    i;
+  i = C(e) ? () => e.value : u(e) ? () => r(e) : () => e;
   let o,
     s = () => {
       let e = c.run();
       (t(e, o), (o = e));
     };
   n?.immediate && s();
-  let c = new i(a, s);
+  let c = new a(i, s);
   o = c.run();
 }
-function P(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
+function F(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
   if (typeof e != 'object' || !e || (t !== void 0 && n >= t) || r.has(e)) return e;
   r.add(e);
-  for (let i in e) P(e[i], t, n + 1, r);
+  for (let i in e) F(e[i], t, n + 1, r);
   return e;
 }
 //#endregion
 //#region lib/runtime-dom/nodeOps.ts
-var F = {
-  createElement: I,
-  createText: L,
-  insert: R,
-  remove: z,
+var I = {
+  createElement: L,
+  createText: R,
+  insert: z,
+  remove: ee,
   setElementText: B,
   setText: V,
   parentNode: H,
   nextSibling: U,
 };
-function I(e) {
+function L(e) {
   return document.createElement(e);
 }
-function L(e) {
+function R(e) {
   return document.createTextNode(e);
 }
-function R(e, t, n) {
+function z(e, t, n) {
   t.insertBefore(e, n || null);
 }
-function z(e) {
+function ee(e) {
   let t = e.parentNode;
   t && t.removeChild(e);
 }
@@ -339,10 +342,53 @@ function Y(e, t, n, r) {
 }
 //#endregion
 //#region lib/runtime-dom/index.ts
-var X = Object.assign({ patchProp: Y }, F);
+var X = Object.assign({ patchProp: Y }, I),
+  Z = /* @__PURE__ */ (function (e) {
+    return (
+      (e[(e.ELEMENT = 1)] = 'ELEMENT'),
+      (e[(e.FUNCTIONAL_COMPONENT = 2)] = 'FUNCTIONAL_COMPONENT'),
+      (e[(e.STATEFUL_COMPONENT = 4)] = 'STATEFUL_COMPONENT'),
+      (e[(e.TEXT_CHILDREN = 8)] = 'TEXT_CHILDREN'),
+      (e[(e.ARRAY_CHILDREN = 16)] = 'ARRAY_CHILDREN'),
+      (e[(e.SLOTS_CHILDREN = 32)] = 'SLOTS_CHILDREN'),
+      (e[(e.TELEPORT = 64)] = 'TELEPORT'),
+      (e[(e.SUSPENSE = 128)] = 'SUSPENSE'),
+      (e[(e.COMPONENT_SHOULD_KEEP_ALIVE = 256)] = 'COMPONENT_SHOULD_KEEP_ALIVE'),
+      (e[(e.COMPONENT_KEEP_ALIVE = 512)] = 'COMPONENT_KEEP_ALIVE'),
+      (e[(e.COMPONENT = 6)] = 'COMPONENT'),
+      e
+    );
+  })({});
+//#endregion
+//#region lib/runtime-core/h.ts
+function Q({ type: e, props: t, children: n }) {
+  return $(e, t, n);
+}
+function $(e, n, r) {
+  let i = t(e) ? Z.ELEMENT : 0,
+    a = {
+      __v_isVnode: !0,
+      type: e,
+      props: n || null,
+      children: r || null,
+      key: n?.key,
+      el: null,
+      shapeFlag: i,
+    };
+  return (te(a), a);
+}
+function te(t) {
+  let { children: n } = t;
+  n != null &&
+    (Array.isArray(n)
+      ? (t.shapeFlag |= Z.ARRAY_CHILDREN)
+      : typeof n == 'string' || typeof n == 'number'
+        ? ((t.children = String(n)), (t.shapeFlag |= Z.TEXT_CHILDREN))
+        : e(n) && (t.shapeFlag |= Z.SLOTS_CHILDREN));
+}
 //#endregion
 //#region lib/runtime-core/index.ts
-function Z(e) {
+function ne(e) {
   let {
       createElement: t,
       createText: n,
@@ -354,32 +400,37 @@ function Z(e) {
       nextSibling: c,
       patchProp: l,
     } = e,
-    u = (e, n) => {
-      let { type: i, props: o, children: s } = e,
-        c = t(i);
-      if ((r(c, n), o)) for (let e in o) l(c, e, null, o[e]);
-      (a(c, s), console.log('[mountElement<VNode>]', e));
+    u = (e, t) => {
+      if (Array.isArray(e)) for (let n of e) d(n, t);
     },
-    d = (e, t, n) => {
-      e != t && e === null && u(t, n);
+    d = (e, n) => {
+      let { type: i, props: o, children: s, shapeFlag: c } = e,
+        d = t(i);
+      if ((r(d, n), o)) for (let e in o) l(d, e, null, o[e]);
+      (c & Z.TEXT_CHILDREN ? a(d, s) : c & Z.ARRAY_CHILDREN && u(s, d),
+        console.log('[mountElement<VNode>]', e));
+    },
+    f = (e, t, n) => {
+      e != t && e === null && d(t, n);
     };
   return {
     render: (e, t) => {
-      (d(t._vnode || null, e, t), (t._vnode = e));
+      (f(t._vnode || null, e, t), (t._vnode = e));
     },
   };
 }
 //#endregion
 export {
-  O as computed,
-  Z as createRenderer,
-  t as effect,
-  S as isRef,
-  E as proxyRefs,
-  u as reactive,
-  _ as ref,
+  k as computed,
+  ne as createRenderer,
+  n as effect,
+  Q as h,
+  C as isRef,
+  D as proxyRefs,
+  d as reactive,
+  v as ref,
   X as renderOptions,
-  w as toRef,
-  T as toRefs,
-  M as watch,
+  T as toRef,
+  E as toRefs,
+  N as watch,
 };
