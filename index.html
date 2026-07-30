@@ -10,9 +10,9 @@
         </div>
     </body>
     <script type="module">
-        import { renderOptions, createRenderer } from './build/output/vue-mini.es.js'
-        import { render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
-        {
+        import { render, h } from './build/output/vue-mini.es.js'
+        // import { render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
+{
         // const count = ref(1)
         // const object = reactive({
         //     name: 'minivue',
@@ -49,14 +49,29 @@
         //     console.log('watch', newVal, oldVal)
         // })
         // obj.name = 'minivue2'
-    }
-        let element = h("h1",{
-            style: {"color":"red"},
-            class: 'abc', 
-            onClick: () => {
-            alert(1)
-        }}, "hello minivue")
-        const renderer = createRenderer(renderOptions)
-        renderer.render(element, document.getElementById("app"))
+ }
+        let element = h(
+            {
+                type:"h1",
+                props:{
+                    style: {"color":"red"},
+                    class: 'abc', 
+                    onClick: () => {
+                        alert(1)
+                    }},
+                children:"hello"})
+        let element2 = h({
+            type:"h1",
+            props:{
+                style: {"color":"red"},
+                class: 'abc',
+                key: 'minivue',
+                onClick: () => {
+                    alert(1)
+                }},
+            children:"minivue"
+        })
+        render(element, document.getElementById("app"))
+        render(element2, document.getElementById("app"))
     </script>
 </html>

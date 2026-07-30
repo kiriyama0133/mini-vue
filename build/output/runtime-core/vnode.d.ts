@@ -1,4 +1,3 @@
-//lib/runtime-core/vnode.ts
 export interface VNode {
   type: any;
   __v_isVnode: boolean;
@@ -21,9 +20,5 @@ export type VNodeOptions = {
 };
 export type VNodeType = string | Symbol;
 export type Container = any;
-export function isVNode(vnode: any): vnode is VNode {
-  return vnode.__v_isVnode;
-}
-export function isSameVNode(n1: VNode, n2: VNode) {
-  return n1.type === n2.type && n1.key === n2.key;
-}
+export declare function isVNode(vnode: any): vnode is VNode;
+export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
