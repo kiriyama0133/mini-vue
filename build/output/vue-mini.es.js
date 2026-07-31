@@ -122,22 +122,22 @@ var b = class {
     ((this.rawValue = e), (this._value = _(e)));
   }
   get value() {
-    return (x(this), this._value);
+    return (ee(this), this._value);
   }
   set value(e) {
-    ((this.rawValue = e), (this._value = _(e)), S(this));
+    ((this.rawValue = e), (this._value = _(e)), x(this));
   }
 };
-function x(e) {
+function ee(e) {
   r && ((e.dep ||= /* @__PURE__ */ new Set()), p(e.dep));
 }
-function S(e) {
+function x(e) {
   e.dep && g(e.dep);
 }
-function C(e) {
+function S(e) {
   return !!(e && e.__v_isRef);
 }
-var w = class {
+var C = class {
   _object;
   _key;
   constructor(e, t) {
@@ -151,26 +151,26 @@ var w = class {
     this._object[this._key] = e;
   }
 };
-function T(e, t) {
-  return new w(e, t);
+function te(e, t) {
+  return new C(e, t);
 }
-function ee(e) {
+function w(e) {
   let t = {};
   for (let n in e) {
     let r = n;
-    t[r] = new w(e, r);
+    t[r] = new C(e, r);
   }
   return t;
 }
-function te(e) {
+function T(e) {
   return new Proxy(e, {
     get(e, t, n) {
       let r = Reflect.get(e, t, n);
-      return C(r) ? r.value : r;
+      return S(r) ? r.value : r;
     },
     set(e, t, n, r) {
       let i = Reflect.get(e, t, r);
-      return C(i) && !C(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
+      return S(i) && !S(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
     },
   });
 }
@@ -229,7 +229,7 @@ function j(e, t, n) {
 function M(e, t, n) {
   let r = (e) => N(e, n?.deep ? 1 : void 0),
     i;
-  i = C(e) ? () => e.value : u(e) ? () => r(e) : () => e;
+  i = S(e) ? () => e.value : u(e) ? () => r(e) : () => e;
   let o,
     s = () => {
       let e = c.run();
@@ -419,35 +419,59 @@ function $(e) {
       nextSibling: c,
       patchProp: l,
     } = e,
-    u = (e, t) => {
-      if (Array.isArray(e)) for (let n of e) d(n, t);
+    u = (e, t, n) => {
+      console.log('TODO: diff', e, t);
     },
-    d = (e, n) => {
+    d = (e, t) => {
+      console.log('[mountChildren]: ', e, t, 'mount');
+      for (let n of e) _(null, n, t);
+    },
+    f = (e, n) => {
       let { type: i, props: o, children: s, shapeFlag: c } = e,
-        d = (e.el = t(i));
-      if ((r(d, n), o)) for (let e in o) l(d, e, null, o[e]);
-      (c & Q.TEXT_CHILDREN ? a(d, s) : c & Q.ARRAY_CHILDREN && u(s, d),
-        console.log('[mountElement<VNode>]', e));
+        u = (e.el = t(i));
+      if (o) for (let e in o) l(u, e, null, o[e]);
+      (c & Q.TEXT_CHILDREN ? a(u, s) : c & Q.ARRAY_CHILDREN && d(s, u), r(u, n));
     },
-    f = (e, t, n) => {
-      e === null ? d(t, n) : p(e, t);
-    },
-    p = (e, t) => {
-      let n = (t.el = e.el);
-      n && J(n, e.props || {}, t.props || {});
+    p = (e) => {
+      e.forEach((e) => {
+        v(e);
+      });
     },
     m = (e, t, n) => {
+      (console.log('[processElement]:', e, t, n, 'patch'), e === null ? f(t, n) : h(e, t));
+    },
+    h = (e, t) => {
+      let n = (t.el = e.el);
+      n && (J(n, e.props || {}, t.props || {}), g(e, t, n));
+    },
+    g = (e, t, n) => {
+      console.log('[patchChildren]: ', e, t, 'patchChildren');
+      let r = e.children,
+        i = t.children,
+        o = e.shapeFlag,
+        s = t.shapeFlag;
+      s & Q.TEXT_CHILDREN
+        ? (o & Q.ARRAY_CHILDREN && p(r), r !== i && a(n, i))
+        : s & Q.ARRAY_CHILDREN
+          ? o & Q.TEXT_CHILDREN
+            ? (a(n, ''), d(i, n))
+            : o & Q.ARRAY_CHILDREN && u(r, i, n)
+          : o & Q.TEXT_CHILDREN
+            ? a(n, '')
+            : o & Q.ARRAY_CHILDREN && p(r);
+    },
+    _ = (e, t, n) => {
       e !== t &&
         (e !== null &&
-          (Z(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), h(e), (e = null))),
-        f(e, t, n));
+          (Z(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), v(e), (e = null))),
+        m(e, t, n));
     },
-    h = (e) => {
+    v = (e) => {
       e.el &&= (i(e.el), null);
     };
   return {
     render: (e, t) => {
-      (e == null && t._vnode && h(t._vnode), m(t._vnode || null, e, t), (t._vnode = e));
+      (e === null && t._vnode && v(t._vnode), _(t._vnode || null, e, t), (t._vnode = e));
     },
   };
 }
@@ -458,13 +482,13 @@ export {
   $ as createRenderer,
   n as effect,
   ne as h,
-  C as isRef,
-  te as proxyRefs,
+  S as isRef,
+  T as proxyRefs,
   d as reactive,
   v as ref,
   ae as render,
   X as renderOptions,
-  T as toRef,
-  ee as toRefs,
+  te as toRef,
+  w as toRefs,
   j as watch,
 };

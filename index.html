@@ -12,6 +12,8 @@
     <script type="module">
         import { render, h } from './build/output/vue-mini.es.js'
         // import { render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
+
+//effect
 {
         // const count = ref(1)
         // const object = reactive({
@@ -50,26 +52,49 @@
         // })
         // obj.name = 'minivue2'
  }
-        let element = h(
-            {
-                type:"h1",
-                props:{
-                    style: {"color":"red"},
-                    class: 'abc', 
-                    onClick: () => {
-                        alert(1)
-                    }},
-                children:"hello"})
+
+// patch
+{
+        // let element = h(
+        //     {
+        //         type:"h1",
+        //         props:{
+        //             style: {"color":"red"},
+        //             class: 'abc', 
+        //             onClick: () => {
+        //                 alert(1)
+        //             }},
+        //         children:"hello"})
+        // let element2 = h({
+        //     type:"h1",
+        //     props:{
+        //         style: {"color":"red"},
+        //         class: 'abc'},
+        //     children:[h({type: "h1", 
+        //     props:{
+        //         style:{"color": "red"},
+        //         onClick:() => {
+        //             alert('click!')
+        //         }
+        // }, children: "123"}), h({type: "h1", children: "123333"})]
+        // })
+}
+        let element = h({
+            type: "h1",
+            children: [
+                h({type: "h1", props: {key: 'a'}, children: 'a'}),
+                h({type: "h1", props: {key: 'b'}, children: 'b'}),
+                h({type: "h1", props: {key: 'c'}, children: 'c'}),
+            ]
+        })
         let element2 = h({
-            type:"h1",
-            props:{
-                style: {"color":"red"},
-                class: 'abc',
-                key: 'minivue',
-                onClick: () => {
-                    alert(1)
-                }},
-            children:"minivue"
+            type: "h1",
+            children: [
+                h({type: "h1", props: {key: 'a'}, children: 'a'}),
+                h({type: "h1", props: {key: 'b'}, children: 'b'}),
+                h({type: "h1", props: {key: 'd'}, children: 'd'}),
+                h({type: "h1", props: {key: 'e'}, children: 'e'}),
+            ]
         })
         render(element, document.getElementById("app"))
         render(element2, document.getElementById("app"))

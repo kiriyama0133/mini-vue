@@ -1,13 +1,14 @@
+import { MiniElement } from '../runtime-dom/nodeOps';
 export interface VNode {
   type: any;
   __v_isVnode: boolean;
   props: VNodeProps | null;
   children: VNodeChildren;
-  el: Node | null;
+  el: MiniElement | null;
   key: string | number | null;
   shapeFlag: number;
 }
-export type VNodeChildren = VNodeChild | VNodeChild[] | Record<string, any>;
+export type VNodeChildren = VNodeChild | VNodeChild[];
 export type VNodeChild = VNode | string | number | null | boolean;
 export type VNodeProps = {
   key?: string | number;
@@ -18,7 +19,11 @@ export type VNodeOptions = {
   props?: VNodeProps;
   children?: VNodeChildren;
 };
+export type RendererNode = Node;
+export type RendererElement = Element;
 export type VNodeType = string | Symbol;
-export type Container = any;
+export type Container = Element & {
+  _vnode?: VNode | null;
+};
 export declare function isVNode(vnode: any): vnode is VNode;
 export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
