@@ -22,6 +22,79 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
   // diff
   const patchKeyedChildren = (c1: VNode[], c2: VNode[], container: Container) => {
     console.log('TODO: diff', c1, c2);
+    let i = 0;
+    let e1 = c1.length - 1; //tail
+    let e2 = c2.length - 1;
+    // left
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[i];
+      const n2 = c2[i];
+      if (isSameVNode(n1, n2)) {
+        // recursion diff
+        patch(n1, n2, container);
+      } else {
+        break;
+      }
+      i++;
+    }
+    console.log('[diff]: ', i, e1, e2);
+    // right
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[e1];
+      const n2 = c2[e2];
+      if (isSameVNode(n1, n2)) {
+        patch(n1, n2, container);
+      } else break;
+      e1--;
+      e2--;
+    }
+    console.log('[diff]: ', i, e1, e2);
+    if (i > e1) {
+      if (i <= e2) {
+        const nextPos = e2 + 1;
+        const anchor = c2[nextPos]?.el ?? null;
+
+        while (i <= e2) {
+          patch(null, c2[i], container, anchor);
+          i++;
+        }
+      }
+    } else if (i > e2) {
+      while (i <= e1) {
+        unmount(c1[i]);
+        i++;
+      }
+    } else {
+      // middle
+      let s1 = i;
+      let s2 = i;
+      const keyToNewIndexMap = new Map();
+      for (let i = s2; i <= e2; i++) {
+        const vnode = c2[i];
+        keyToNewIndexMap.set(vnode.key, i);
+      }
+      for (let i = s1; i <= e1; i++) {
+        const vnode = c1[i];
+        const newIndex = keyToNewIndexMap.get(vnode.key);
+        if (newIndex == undefined) {
+          unmount(vnode);
+        } else {
+          patch(vnode, c2[newIndex], container);
+        }
+      }
+      // insertBefore
+      let toBePatched = e2 - s2 + 1;
+      for (let i = toBePatched - 1; i >= 0; i--) {
+        let newIndex = s2 + i;
+        let anchor = newIndex + 1 < c2.length ? c2[newIndex + 1].el : null;
+        let vnode = c2[newIndex];
+        if (!vnode.el) {
+          patch(null, vnode, container, anchor);
+        } else {
+          hostInsert(vnode.el!, container, anchor);
+        }
+      }
+    }
   };
   const mountChildren = (children: VNode[], parent: Container) => {
     console.log('[mountChildren]: ', children, parent, 'mount');
@@ -29,7 +102,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       patch(null, child, parent);
     }
   };
-  const mountElement = (vnode: VNode, container: Container) => {
+  const mountElement = (vnode: VNode, container: Container, anchor: Node | null) => {
     const { type, props, children, shapeFlag } = vnode;
     const el = (vnode.el = hostCreateElement(type));
     if (props) {
@@ -42,17 +115,22 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
       mountChildren(children as VNode[], el);
     }
-    hostInsert(el, container);
+    hostInsert(el, container, anchor);
   };
   const unmountChildren = (children: VNode[]) => {
     children.forEach((child) => {
       unmount(child);
     });
   };
-  const processElemet = (n1: VNode | null, n2: VNode, container: Container) => {
+  const processElemet = (
+    n1: VNode | null,
+    n2: VNode,
+    container: Container,
+    anchor: Node | null
+  ) => {
     console.log(`[processElement]:`, n1, n2, container, 'patch');
     if (n1 === null) {
-      mountElement(n2, container);
+      mountElement(n2, container, anchor);
     } else {
       patchElement(n1, n2);
     }
@@ -141,7 +219,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       }
     }
   };
-  const patch = (n1: VNode | null, n2: VNode, container: Container) => {
+  const patch = (n1: VNode | null, n2: VNode, container: Container, anchor: Node | null = null) => {
     if (n1 === n2) {
       return;
     }
@@ -152,7 +230,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         n1 = null; // 原节点不复用
       }
     }
-    processElemet(n1, n2, container);
+    processElemet(n1, n2, container, anchor);
   };
   const unmount = (vnode: VNode) => {
     if (vnode.el) {

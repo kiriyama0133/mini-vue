@@ -90,13 +90,20 @@
         let element2 = h({
             type: "h1",
             children: [
+                // h({type: "h1", props: {key: 'd'}, children: 'd'}),
                 h({type: "h1", props: {key: 'a'}, children: 'a'}),
+                h({type: "h1", props: {key: 'c'}, children: 'c'}),
                 h({type: "h1", props: {key: 'b'}, children: 'b'}),
-                h({type: "h1", props: {key: 'd'}, children: 'd'}),
-                h({type: "h1", props: {key: 'e'}, children: 'e'}),
             ]
         })
         render(element, document.getElementById("app"))
         render(element2, document.getElementById("app"))
     </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
 </html>

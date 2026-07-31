@@ -107,9 +107,9 @@ function v(e) {
   return y(e);
 }
 function y(e) {
-  return new b(e);
+  return new ee(e);
 }
-var b = class {
+var ee = class {
   rawValue;
   __v_isRef = !0;
   _value;
@@ -118,13 +118,13 @@ var b = class {
     ((this.rawValue = e), (this._value = _(e)));
   }
   get value() {
-    return (ee(this), this._value);
+    return (b(this), this._value);
   }
   set value(e) {
     ((this.rawValue = e), (this._value = _(e)), x(this));
   }
 };
-function ee(e) {
+function b(e) {
   r && ((e.dep ||= new Set()), p(e.dep));
 }
 function x(e) {
@@ -391,24 +391,68 @@ function $(e) {
     } = e,
     u = (e, t, n) => {
       console.log(`TODO: diff`, e, t);
+      let i = 0,
+        a = e.length - 1,
+        o = t.length - 1;
+      for (; i <= a && i <= o;) {
+        let r = e[i],
+          a = t[i];
+        if (Z(r, a)) _(r, a, n);
+        else break;
+        i++;
+      }
+      for (console.log(`[diff]: `, i, a, o); i <= a && i <= o;) {
+        let r = e[a],
+          i = t[o];
+        if (Z(r, i)) _(r, i, n);
+        else break;
+        (a--, o--);
+      }
+      if ((console.log(`[diff]: `, i, a, o), i > a)) {
+        if (i <= o) {
+          let e = t[o + 1]?.el ?? null;
+          for (; i <= o;) (_(null, t[i], n, e), i++);
+        }
+      } else if (i > o) for (; i <= a;) (v(e[i]), i++);
+      else {
+        let s = i,
+          c = i,
+          l = new Map();
+        for (let e = c; e <= o; e++) {
+          let n = t[e];
+          l.set(n.key, e);
+        }
+        for (let r = s; r <= a; r++) {
+          let i = e[r],
+            a = l.get(i.key);
+          a == null ? v(i) : _(i, t[a], n);
+        }
+        let u = o - c + 1;
+        for (let e = u - 1; e >= 0; e--) {
+          let i = c + e,
+            a = i + 1 < t.length ? t[i + 1].el : null,
+            o = t[i];
+          o.el ? r(o.el, n, a) : _(null, o, n, a);
+        }
+      }
     },
     d = (e, t) => {
       console.log(`[mountChildren]: `, e, t, `mount`);
       for (let n of e) _(null, n, t);
     },
-    f = (e, n) => {
-      let { type: i, props: o, children: s, shapeFlag: c } = e,
-        u = (e.el = t(i));
-      if (o) for (let e in o) l(u, e, null, o[e]);
-      (c & Q.TEXT_CHILDREN ? a(u, s) : c & Q.ARRAY_CHILDREN && d(s, u), r(u, n));
+    f = (e, n, i) => {
+      let { type: o, props: s, children: c, shapeFlag: u } = e,
+        f = (e.el = t(o));
+      if (s) for (let e in s) l(f, e, null, s[e]);
+      (u & Q.TEXT_CHILDREN ? a(f, c) : u & Q.ARRAY_CHILDREN && d(c, f), r(f, n, i));
     },
     p = (e) => {
       e.forEach((e) => {
         v(e);
       });
     },
-    m = (e, t, n) => {
-      (console.log(`[processElement]:`, e, t, n, `patch`), e === null ? f(t, n) : h(e, t));
+    m = (e, t, n, r) => {
+      (console.log(`[processElement]:`, e, t, n, `patch`), e === null ? f(t, n, r) : h(e, t));
     },
     h = (e, t) => {
       let n = (t.el = e.el);
@@ -430,11 +474,11 @@ function $(e) {
             ? a(n, ``)
             : o & Q.ARRAY_CHILDREN && p(r);
     },
-    _ = (e, t, n) => {
+    _ = (e, t, n, r = null) => {
       e !== t &&
         (e !== null &&
           (Z(e, t) || (console.log(`[patch<VNode>]`, e, t, `unmount`), v(e), (e = null))),
-        m(e, t, n));
+        m(e, t, n, r));
     },
     v = (e) => {
       e.el &&= (i(e.el), null);
