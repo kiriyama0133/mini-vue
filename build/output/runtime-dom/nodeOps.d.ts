@@ -25,7 +25,7 @@ declare function createElement(tag: string): MiniElement;
 declare function createText(text: string): MiniText;
 declare function insert(child: MiniNode, parent: MiniNode, anchor?: MiniNode | null): void;
 declare function remove(child: MiniNode): void;
-declare function setElementText(el: MiniElement, text: string): void;
+declare function setElementText(el: MiniNode, text: string): void;
 declare function setText(node: MiniText, text: string): void;
 declare function parentNode(node: MiniNode): ParentNode | null;
 declare function nextSibling(node: MiniNode): ChildNode | null;

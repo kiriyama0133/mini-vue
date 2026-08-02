@@ -2,6 +2,20 @@
 
 所有版本的重大变更和更新记录将在此列出。
 
+## [1.4.0](https://github.com/kiriyama0133/mini-vue/compare/v1.3.0...v1.4.0) (2026-07-31)
+
+### 📝 文档更新 (Documentation)
+
+- update license doc ([d800f3d](https://github.com/kiriyama0133/mini-vue/commit/d800f3df3a0183a334c68211b431bef1bdd51ee9))
+
+### ✨ 新特性 (Features)
+
+- implement createRenderer funtion ([085866b](https://github.com/kiriyama0133/mini-vue/commit/085866bf5780b1ec3f51d8ea8503677846a45e44))
+- implement diff algorithm ([7f1eda1](https://github.com/kiriyama0133/mini-vue/commit/7f1eda1111e13d8f51b57a70ac2e394221868ea1))
+- implement h using a structural approach ([ad77882](https://github.com/kiriyama0133/mini-vue/commit/ad7788214383b82a99fd51110c318b3aee9b0db8))
+- implement render, excluding patchChildren、diff ([364c6f9](https://github.com/kiriyama0133/mini-vue/commit/364c6f9e844e74adc5e1ace835179c2d79fe71fc))
+- optimize patch-algorithm excluding diff ([04c3a83](https://github.com/kiriyama0133/mini-vue/commit/04c3a83bc4b2936f42f9afae6713a40effa3ad8b))
+
 ## [1.3.0](https://github.com/kiriyama0133/mini-vue/compare/v1.2.0...v1.3.0) (2026-07-27)
 
 ### ✨ 新特性 (Features)

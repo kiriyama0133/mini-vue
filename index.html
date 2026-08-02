@@ -10,7 +10,7 @@
         </div>
     </body>
     <script type="module">
-        import { render, h } from './build/output/vue-mini.es.js'
+        import { render, h, Text, Fragment } from './build/output/vue-mini.es.js'
         // import { render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
 
 //effect
@@ -79,25 +79,52 @@
         // }, children: "123"}), h({type: "h1", children: "123333"})]
         // })
 }
-        let element = h({
-            type: "h1",
-            children: [
-                h({type: "h1", props: {key: 'a'}, children: 'a'}),
-                h({type: "h1", props: {key: 'b'}, children: 'b'}),
-                h({type: "h1", props: {key: 'c'}, children: 'c'}),
-            ]
-        })
-        let element2 = h({
-            type: "h1",
-            children: [
-                // h({type: "h1", props: {key: 'd'}, children: 'd'}),
-                h({type: "h1", props: {key: 'a'}, children: 'a'}),
-                h({type: "h1", props: {key: 'c'}, children: 'c'}),
-                h({type: "h1", props: {key: 'b'}, children: 'b'}),
-            ]
-        })
-        render(element, document.getElementById("app"))
-        render(element2, document.getElementById("app"))
+
+{
+
+        // let element = h({
+        //     type: "h1",
+        //     children: [
+        //         h({type: "h1", props: {key: 'a'}, children: 'a'}),
+        //         h({type: "h1", props: {key: 'b'}, children: 'b'}),
+        //         h({type: "h1", props: {key: 'c'}, children: 'c'}),
+        //     ]
+        // })
+        // let element2 = h({
+        //     type: "h1",
+        //     children: [
+        //         // h({type: "h1", props: {key: 'd'}, children: 'd'}),
+        //         h({type: "h1", props: {key: 'a'}, children: 'a'}),
+        //         h({type: "h1", props: {key: 'c'}, children: 'c'}),
+        //         h({type: "h1", props: {key: 'b'}, children: 'b'}),
+        //     ]
+        // })
+        // render(element, document.getElementById("app"))
+        // render(element2, document.getElementById("app"))
+}
+    
+// text
+const app = document.getElementById('app')
+render(
+  h({
+    type: Fragment,
+    children: [
+        h({
+            type: "h1", children: "my name is:", 
+            props: {
+                style: {
+                    color: "red"
+                }
+            }
+        }),
+        h({
+            type: Text, children: "kiriyama!"
+        }),
+    ]
+  }),
+  app
+)
+
     </script>
     <style>
         * {

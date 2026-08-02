@@ -1,12 +1,14 @@
 //lib/runtime-core/index.ts
 import { renderOptions } from '../runtime-dom';
-import { VNode, Container, VNodeChildren, isSameVNode, VNodeChild } from './vnode';
+import { VNode, Container, VNodeChildren, isSameVNode, VNodeChild, isText } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
 import { MiniElement } from '../runtime-dom/nodeOps';
 import { isArray } from '../utils/object';
 
 export { h } from './h';
+export const Text = Symbol('Text');
+export const Fragment = Symbol('Fragnment');
 export function createRenderer(RenderOptions: typeof renderOptions) {
   const {
     createElement: hostCreateElement,
@@ -136,7 +138,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     }
   };
   const patchElement = (n1: VNode, n2: VNode) => {
-    let el = (n2.el = n1.el);
+    let el = (n2.el = n1.el as MiniElement);
     if (!el) {
       return;
     }
@@ -145,7 +147,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     patchProps(el as MiniElement, oldProps, newProps);
     patchChildren(n1, n2, el);
   };
-  const patchChildren = (n1: VNode, n2: VNode, container: MiniElement) => {
+  const patchChildren = (n1: VNode, n2: VNode, container: Container) => {
     console.log(`[patchChildren]: `, n1, n2, 'patchChildren');
     const c1 = n1.children;
     const c2 = n2.children;
@@ -219,6 +221,37 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       }
     }
   };
+  const processText = (n1: VNode | null, n2: VNode, container: Container) => {
+    if (n1 === null) {
+      const textNode = (n2.el = hostCreateText(n2.children as string));
+      hostInsert(textNode, container);
+    } else {
+      const el = (n2.el = n1.el);
+      if (n2.children !== n1.children) {
+        if (el && isText(el)) {
+          hostSetText(el, n2.children as string);
+        }
+      }
+    }
+  };
+  const processComponent = (
+    n1: VNode,
+    n2: VNode,
+    container: Container,
+    anchor: Node | null = null
+  ) => {
+    if (n1 === null) {
+    }
+  };
+  const processFragment = (n1: VNode | null, n2: VNode, conatiner: Container) => {
+    if (n1 === null) {
+      if (n2.children) {
+        mountChildren(n2.children as VNode[], conatiner);
+      }
+    } else {
+      patchChildren(n1, n2, conatiner);
+    }
+  };
   const patch = (n1: VNode | null, n2: VNode, container: Container, anchor: Node | null = null) => {
     if (n1 === n2) {
       return;
@@ -230,9 +263,32 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         n1 = null; // 原节点不复用
       }
     }
-    processElemet(n1, n2, container, anchor);
+    const { type, shapeFlag } = n2;
+    switch (type) {
+      case Text:
+        processText(n1, n2, container);
+        break;
+      case Fragment:
+        processFragment(n1, n2, container);
+        break;
+      default:
+        if (shapeFlag & ShapeFlags.ELEMENT) {
+          processElemet(n1, n2, container, anchor);
+        } else if (shapeFlag & ShapeFlags.COMPONENT) {
+          if (n1 !== null) {
+            processComponent(n1, n2, container, anchor);
+          }
+        }
+        break;
+    }
   };
   const unmount = (vnode: VNode) => {
+    if (vnode.type === Fragment) {
+      if (vnode.children) {
+        unmountChildren(vnode.children as VNode[]);
+      }
+      return;
+    }
     if (vnode.el) {
       hostRemove(vnode.el);
       vnode.el = null;

@@ -2,11 +2,11 @@ import { MiniElement } from '../runtime-dom/nodeOps';
 
 //lib/runtime-core/vnode.ts
 export interface VNode {
-  type: any;
+  type: any | Symbol;
   __v_isVnode: boolean;
   props: VNodeProps | null;
   children: VNodeChildren;
-  el: MiniElement | null;
+  el: Node | null;
   key: string | number | null;
   shapeFlag: number;
 }
@@ -32,4 +32,7 @@ export function isVNode(vnode: any): vnode is VNode {
 }
 export function isSameVNode(n1: VNode, n2: VNode) {
   return n1.type === n2.type && n1.key === n2.key;
+}
+export function isText(node: Node): node is Text {
+  return node.nodeType === Node.TEXT_NODE;
 }

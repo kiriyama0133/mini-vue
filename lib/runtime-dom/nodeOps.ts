@@ -37,7 +37,7 @@ function remove(child: MiniNode) {
   const parent = child.parentNode;
   if (parent) parent.removeChild(child);
 }
-function setElementText(el: MiniElement, text: string) {
+function setElementText(el: MiniNode, text: string) {
   el.textContent = text;
 }
 function setText(node: MiniText, text: string) {

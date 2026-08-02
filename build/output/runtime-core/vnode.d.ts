@@ -1,10 +1,9 @@
-import { MiniElement } from '../runtime-dom/nodeOps';
 export interface VNode {
-  type: any;
+  type: any | Symbol;
   __v_isVnode: boolean;
   props: VNodeProps | null;
   children: VNodeChildren;
-  el: MiniElement | null;
+  el: Node | null;
   key: string | number | null;
   shapeFlag: number;
 }
@@ -27,3 +26,4 @@ export type Container = Element & {
 };
 export declare function isVNode(vnode: any): vnode is VNode;
 export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
+export declare function isText(node: Node): node is Text;

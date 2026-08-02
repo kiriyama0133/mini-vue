@@ -10,7 +10,7 @@ declare const renderOptions: {
     anchor?: import('./nodeOps').MiniNode | null
   ) => void;
   remove: (child: import('./nodeOps').MiniNode) => void;
-  setElementText: (el: import('./nodeOps').MiniElement, text: string) => void;
+  setElementText: (el: import('./nodeOps').MiniNode, text: string) => void;
   setText: (node: import('./nodeOps').MiniText, text: string) => void;
   parentNode: (node: import('./nodeOps').MiniNode) => ParentNode | null;
   nextSibling: (node: import('./nodeOps').MiniNode) => ChildNode | null;
