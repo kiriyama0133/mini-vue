@@ -9,6 +9,26 @@ export interface VNode {
   el: Node | null;
   key: string | number | null;
   shapeFlag: number;
+  component?: ComponentInstance;
+}
+export interface Component {
+  setup?: () => any;
+  render?: () => VNode;
+  data?: () => Record<string, any>;
+  props?: string[] | Record<string, any>;
+}
+export interface ComponentInstance {
+  vnode: VNode;
+  data: any;
+  props: Record<string, any>;
+  attrs: Record<string, any>;
+  proxy: any;
+  update: Function | null;
+  type: Component;
+  setupState: Record<string, any>;
+  render: Function | null;
+  subTree: VNode | null;
+  isMounted: boolean;
 }
 export type VNodeChildren = VNodeChild | VNodeChild[];
 export type VNodeChild = VNode | string | number | null | boolean;

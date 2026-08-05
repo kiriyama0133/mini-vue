@@ -102,29 +102,43 @@
         // render(element, document.getElementById("app"))
         // render(element2, document.getElementById("app"))
 }
-    
-// text
-const app = document.getElementById('app')
-render(
-  h({
-    type: Fragment,
-    children: [
-        h({
-            type: "h1", children: "my name is:", 
-            props: {
-                style: {
-                    color: "red"
-                }
-            }
-        }),
-        h({
-            type: Text, children: "kiriyama!"
-        }),
-    ]
-  }),
-  app
-)
 
+// vue-component render
+    const app = document.getElementById('app')
+    const VueComponent = {
+        data() {
+            return {name: 'kiriyama', age: 22}
+        },
+        props: ['title', 'count'],
+        render(proxy) {
+            return h({type: Fragment, children: [
+                h(
+                    {
+                        type: Text,
+                        children: "my name is " + this.title
+                    }
+                ),
+                h({
+                    type: "a",
+                    props: this.$attrs,
+                    children: proxy.age
+                })
+            ]})
+        }
+    }
+    render(
+    h({
+        type: VueComponent,
+        props: {
+            class: "color",
+            title: 'hello',
+            style: {
+                'color': 'red',
+            }
+        }
+    }),
+    app
+)
     </script>
     <style>
         * {

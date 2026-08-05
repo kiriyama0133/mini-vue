@@ -1,10 +1,21 @@
 //lib/runtime-core/index.ts
 import { renderOptions } from '../runtime-dom';
-import { VNode, Container, VNodeChildren, isSameVNode, VNodeChild, isText } from './vnode';
+import {
+  VNode,
+  Container,
+  VNodeChildren,
+  isSameVNode,
+  VNodeChild,
+  isText,
+  ComponentInstance,
+} from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
 import { MiniElement } from '../runtime-dom/nodeOps';
 import { isArray } from '../utils/object';
+import { reactive } from '../reactivity/index';
+import { effect, ReactiveEffect } from '../effect';
+import { queueJob } from './schedular';
 
 export { h } from './h';
 export const Text = Symbol('Text');
@@ -234,15 +245,132 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       }
     }
   };
+  // region: component-start
+  const createComponentInstance = (vnode: VNode): ComponentInstance => {
+    return {
+      vnode: vnode,
+      data: {},
+      attrs: {},
+      proxy: null,
+      update: null,
+      props: vnode.props || {},
+      type: vnode.type,
+      setupState: {},
+      render: null,
+      subTree: null,
+      isMounted: false,
+    };
+  };
+  const initProps = (instance: ComponentInstance, rawProps: any) => {
+    const props: any = {};
+    const attrs: any = {};
+    const propsOptions = instance.type.props || [];
+    for (const key in rawProps) {
+      if (Array.isArray(propsOptions) && propsOptions.includes(key)) {
+        props[key] = rawProps[key];
+      } else {
+        attrs[key] = rawProps[key];
+      }
+    }
+    instance.props = props;
+    instance.attrs = attrs;
+  };
+  // const updateComponent = (n1: VNode, n2:VNode) => {
+  //   const instance = n2.component = n1.component
+  //   if (instance) {
+  //     instance.vnode = n2
+  //     setupRenderEffect(instance, n2, n1.el!.parentNode as Container)
+  //   }
+  // }
+  const setupComponent = (instance: ComponentInstance) => {
+    initProps(instance, instance.vnode.props);
+    const Component = instance.type;
+    instance.render = Component.render ?? null;
+    if (Component.data) {
+      instance.data = reactive(Component.data());
+    }
+    instance.proxy = new Proxy(instance, {
+      get(target, key) {
+        if (typeof key === 'symbol') {
+          return;
+        }
+        if (key in target.props) {
+          return target.props[key];
+        }
+        if (key in target.data) {
+          return target.data[key];
+        }
+        if (key === '$attrs') {
+          return target.attrs;
+        }
+      },
+      set(target, key, value) {
+        if (typeof key === 'symbol') {
+          return false;
+        }
+        if (key in target.data) {
+          target.data[key] = value;
+          return true;
+        }
+        if (key in target.props) {
+          console.warn('props is readonly');
+          return false;
+        }
+        return true;
+      },
+    });
+    instance.render = Component.render ?? null;
+  };
+  const mountComponent = (vnode: VNode, container: Container, anchor: Node | null = null) => {
+    console.log('[mountComponent]: ', vnode);
+    const instance = createComponentInstance(vnode);
+    setupComponent(instance);
+    setupRenderEffect(instance, vnode, container, anchor);
+  };
+  const setupRenderEffect = (
+    instance: ComponentInstance,
+    vnode: VNode,
+    container: Container,
+    anchor: Node | null = null
+  ) => {
+    const componentUpdateFn = () => {
+      if (!instance.isMounted) {
+        const subTree = instance.render?.call(instance.proxy, instance.proxy);
+        instance.subTree = subTree;
+        patch(null, subTree, container, anchor);
+        vnode.el = subTree.el;
+        instance.isMounted = true;
+      } else {
+        const prevTree = instance.subTree;
+        const nextTree = instance.render?.call(instance.data, instance.data);
+        instance.subTree = nextTree;
+        patch(prevTree, nextTree, container, anchor);
+      }
+    };
+    let update: () => void;
+    const effect = new ReactiveEffect(componentUpdateFn, () => {
+      queueJob(update);
+    });
+    update = instance.update = () => effect.run();
+    update();
+  };
   const processComponent = (
-    n1: VNode,
+    n1: VNode | null,
     n2: VNode,
     container: Container,
     anchor: Node | null = null
   ) => {
+    console.log('[processComponent]');
     if (n1 === null) {
+      mountComponent(n2, container, anchor);
+    } else {
+      // updateComponent(
+      //   n1,
+      //   n2
+      // )
     }
   };
+  //region: component-end
   const processFragment = (n1: VNode | null, n2: VNode, conatiner: Container) => {
     if (n1 === null) {
       if (n2.children) {
@@ -275,9 +403,8 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         if (shapeFlag & ShapeFlags.ELEMENT) {
           processElemet(n1, n2, container, anchor);
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
-          if (n1 !== null) {
-            processComponent(n1, n2, container, anchor);
-          }
+          console.log('[patch]: component');
+          processComponent(n1, n2, container, anchor);
         }
         break;
     }

@@ -7,7 +7,11 @@ export function h({ type, props, children }: VNodeOptions) {
   return createVNode(type, props, children);
 }
 function createVNode(type: any, props?: VNodeProps, children?: VNodeChildren) {
-  const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : 0;
+  const shapeFlag = isString(type)
+    ? ShapeFlags.ELEMENT
+    : isObject(type)
+      ? ShapeFlags.STATEFUL_COMPONENT
+      : 0;
   const vnode: VNode = {
     __v_isVnode: true,
     type,
