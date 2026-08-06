@@ -13,6 +13,7 @@ export interface Component {
   render?: () => VNode;
   data?: () => Record<string, any>;
   props?: string[] | Record<string, any>;
+  mounted?: (proxy: any) => void;
 }
 export interface ComponentInstance {
   vnode: VNode;

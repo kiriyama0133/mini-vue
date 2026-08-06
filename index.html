@@ -104,38 +104,58 @@
 }
 
 // vue-component render
-    const app = document.getElementById('app')
-    const VueComponent = {
-        data() {
-            return {name: 'kiriyama', age: 22}
-        },
-        props: ['title', 'count'],
-        render(proxy) {
-            return h({type: Fragment, children: [
-                h(
-                    {
-                        type: Text,
-                        children: "my name is " + this.title
-                    }
-                ),
+const app = document.getElementById('app')
+const Child = {
+    props: ['title', 'count', 'age'],
+    render(proxy) {
+        return h({
+            type: Fragment,
+            children: [
+                h({
+                    type: Text,
+                    children: "my name is " + this.title,
+                    props: this.$attrs,
+                }),
                 h({
                     type: "a",
                     props: this.$attrs,
                     children: proxy.age
                 })
-            ]})
-        }
+            ]
+        })
     }
-    render(
-    h({
-        type: VueComponent,
-        props: {
-            class: "color",
+}
+
+const Parent = {
+    data() {
+        return {
             title: 'hello',
-            style: {
-                'color': 'red',
-            }
+            age: 22
         }
+    },
+    mounted() {
+        setTimeout(() => {
+            this.title = 'world'
+        }, 1000)
+    },
+    render(proxy) {
+        return h({
+            type: Child,
+            props: {
+                title: this.title,
+                age: this.age,
+                class: "color",
+                style: {
+                    color: 'red'
+                }
+            }
+        })
+    }
+}
+
+render(
+    h({
+        type: Parent
     }),
     app
 )

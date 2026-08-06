@@ -8,6 +8,7 @@ import {
   VNodeChild,
   isText,
   ComponentInstance,
+  VNodeProps,
 } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
@@ -16,6 +17,7 @@ import { isArray } from '../utils/object';
 import { reactive } from '../reactivity/index';
 import { effect, ReactiveEffect } from '../effect';
 import { queueJob } from './schedular';
+import { initProps, updateProps } from '../utils/props';
 
 export { h } from './h';
 export const Text = Symbol('Text');
@@ -261,27 +263,6 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       isMounted: false,
     };
   };
-  const initProps = (instance: ComponentInstance, rawProps: any) => {
-    const props: any = {};
-    const attrs: any = {};
-    const propsOptions = instance.type.props || [];
-    for (const key in rawProps) {
-      if (Array.isArray(propsOptions) && propsOptions.includes(key)) {
-        props[key] = rawProps[key];
-      } else {
-        attrs[key] = rawProps[key];
-      }
-    }
-    instance.props = props;
-    instance.attrs = attrs;
-  };
-  // const updateComponent = (n1: VNode, n2:VNode) => {
-  //   const instance = n2.component = n1.component
-  //   if (instance) {
-  //     instance.vnode = n2
-  //     setupRenderEffect(instance, n2, n1.el!.parentNode as Container)
-  //   }
-  // }
   const setupComponent = (instance: ComponentInstance) => {
     initProps(instance, instance.vnode.props);
     const Component = instance.type;
@@ -306,15 +287,15 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       },
       set(target, key, value) {
         if (typeof key === 'symbol') {
-          return false;
+          return true;
         }
-        if (key in target.data) {
+        if (key in target.data && target.data) {
           target.data[key] = value;
           return true;
         }
-        if (key in target.props) {
+        if (key in target.props && target.props) {
           console.warn('props is readonly');
-          return false;
+          return true;
         }
         return true;
       },
@@ -324,6 +305,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
   const mountComponent = (vnode: VNode, container: Container, anchor: Node | null = null) => {
     console.log('[mountComponent]: ', vnode);
     const instance = createComponentInstance(vnode);
+    vnode.component = instance; // save instance
     setupComponent(instance);
     setupRenderEffect(instance, vnode, container, anchor);
   };
@@ -340,9 +322,10 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         patch(null, subTree, container, anchor);
         vnode.el = subTree.el;
         instance.isMounted = true;
+        instance.type.mounted?.call(instance.proxy, instance.proxy);
       } else {
         const prevTree = instance.subTree;
-        const nextTree = instance.render?.call(instance.data, instance.data);
+        const nextTree = instance.render?.call(instance.proxy, instance.proxy);
         instance.subTree = nextTree;
         patch(prevTree, nextTree, container, anchor);
       }
@@ -354,6 +337,18 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     update = instance.update = () => effect.run();
     update();
   };
+  const updateComponent = (n1: VNode, n2: VNode) => {
+    const instance = (n2.component = n1.component);
+    if (!instance) {
+      throw new Error('Component instance is missing');
+    }
+    const prevProps = n1.props ?? {};
+    const nextProps = n2.props ?? {};
+    instance.vnode = n2;
+    n2.el = n1.el;
+    updateProps(instance, prevProps, nextProps);
+    instance.update?.();
+  };
   const processComponent = (
     n1: VNode | null,
     n2: VNode,
@@ -364,10 +359,8 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     if (n1 === null) {
       mountComponent(n2, container, anchor);
     } else {
-      // updateComponent(
-      //   n1,
-      //   n2
-      // )
+      // component update
+      updateComponent(n1, n2);
     }
   };
   //region: component-end
