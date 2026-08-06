@@ -13,11 +13,12 @@ import {
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
 import { MiniElement } from '../runtime-dom/nodeOps';
-import { isArray } from '../utils/object';
+import { hasOwn, isArray, isFunction, isObject } from '../utils/object';
 import { reactive } from '../reactivity/index';
 import { effect, ReactiveEffect } from '../effect';
 import { queueJob } from './schedular';
 import { initProps, updateProps } from '../utils/props';
+import { proxyRefs } from '../ref';
 
 export { h } from './h';
 export const Text = Symbol('Text');
@@ -270,37 +271,57 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     if (Component.data) {
       instance.data = reactive(Component.data());
     }
+    if (Component.setup) {
+      const setupContext = {
+        attrs: instance.attrs,
+      };
+      const setupResult = Component.setup(instance.props, setupContext);
+      if (isFunction(setupResult)) {
+        instance.render = setupResult; // return render
+      } else if (isObject(setupResult)) {
+        // return funtions and states exposed
+        instance.setupState = proxyRefs(setupResult);
+      }
+    }
     instance.proxy = new Proxy(instance, {
       get(target, key) {
+        const { setupState, data, props, attrs } = target;
         if (typeof key === 'symbol') {
           return;
         }
-        if (key in target.props) {
-          return target.props[key];
+        if (hasOwn(setupState, key)) {
+          return setupState[key];
         }
-        if (key in target.data) {
-          return target.data[key];
+        if (hasOwn(data, key)) {
+          return data[key];
+        }
+        if (hasOwn(props, key)) {
+          return props[key];
         }
         if (key === '$attrs') {
-          return target.attrs;
+          return attrs;
         }
       },
       set(target, key, value) {
+        const { setupState, data, props, attrs } = target;
         if (typeof key === 'symbol') {
           return true;
         }
-        if (key in target.data && target.data) {
-          target.data[key] = value;
+        if (hasOwn(setupState, key) && setupState) {
+          setupState[key] = value;
           return true;
         }
-        if (key in target.props && target.props) {
+        if (hasOwn(data, key) && data) {
+          data[key] = value;
+          return true;
+        }
+        if (hasOwn(props, key) && props) {
           console.warn('props is readonly');
           return true;
         }
         return true;
       },
     });
-    instance.render = Component.render ?? null;
   };
   const mountComponent = (vnode: VNode, container: Container, anchor: Node | null = null) => {
     console.log('[mountComponent]: ', vnode);

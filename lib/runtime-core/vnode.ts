@@ -1,6 +1,12 @@
-import { MiniElement } from '../runtime-dom/nodeOps';
-
 //lib/runtime-core/vnode.ts
+
+export type SetupProps = Readonly<Record<string, any>>;
+export interface SetupContext {
+  attrs: Record<string, any>; // 没有被声明为 props 的属性
+  // slots: Record<string, Function> // 父组件传入的插槽
+  // emit: (event: string, ...args: any[]) => void // 触发组件事件
+  // expose: (exposed?: Record<string, any>) => void // 决定父组件通过 ref 能访问哪些内容
+}
 export interface VNode {
   type: any | Symbol;
   __v_isVnode: boolean;
@@ -12,7 +18,7 @@ export interface VNode {
   component?: ComponentInstance;
 }
 export interface Component {
-  setup?: () => any;
+  setup?: (setupProps: SetupProps, setupContext: SetupContext) => any;
   render?: () => VNode;
   data?: () => Record<string, any>;
   props?: string[] | Record<string, any>;
