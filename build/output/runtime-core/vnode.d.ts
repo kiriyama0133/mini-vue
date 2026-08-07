@@ -1,3 +1,9 @@
+import { Slots } from './slot';
+export type SetupProps = Readonly<Record<string, any>>;
+export interface SetupContext {
+  attrs: Record<string, any>;
+  slots: Slots;
+}
 export interface VNode {
   type: any | Symbol;
   __v_isVnode: boolean;
@@ -9,7 +15,7 @@ export interface VNode {
   component?: ComponentInstance;
 }
 export interface Component {
-  setup?: () => any;
+  setup?: (setupProps: SetupProps, setupContext: SetupContext) => any;
   render?: () => VNode;
   data?: () => Record<string, any>;
   props?: string[] | Record<string, any>;
@@ -18,6 +24,7 @@ export interface Component {
 export interface ComponentInstance {
   vnode: VNode;
   data: any;
+  slots: Slots;
   props: Record<string, any>;
   attrs: Record<string, any>;
   proxy: any;
@@ -28,7 +35,7 @@ export interface ComponentInstance {
   subTree: VNode | null;
   isMounted: boolean;
 }
-export type VNodeChildren = VNodeChild | VNodeChild[];
+export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
 export type VNodeProps = {
   key?: string | number;

@@ -35,7 +35,6 @@ function normalizeChildren(vnode: VNode) {
     vnode.children = String(children);
     vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
   } else if (isObject(children)) {
-    // slots
     vnode.shapeFlag |= ShapeFlags.SLOTS_CHILDREN;
   }
 }

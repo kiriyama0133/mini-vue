@@ -1,9 +1,11 @@
 //lib/runtime-core/vnode.ts
 
+import { Slots } from './slot';
+
 export type SetupProps = Readonly<Record<string, any>>;
 export interface SetupContext {
   attrs: Record<string, any>; // 没有被声明为 props 的属性
-  // slots: Record<string, Function> // 父组件传入的插槽
+  slots: Slots; // 父组件传入的插槽
   // emit: (event: string, ...args: any[]) => void // 触发组件事件
   // expose: (exposed?: Record<string, any>) => void // 决定父组件通过 ref 能访问哪些内容
 }
@@ -27,6 +29,7 @@ export interface Component {
 export interface ComponentInstance {
   vnode: VNode;
   data: any;
+  slots: Slots;
   props: Record<string, any>;
   attrs: Record<string, any>;
   proxy: any;
@@ -37,7 +40,7 @@ export interface ComponentInstance {
   subTree: VNode | null;
   isMounted: boolean;
 }
-export type VNodeChildren = VNodeChild | VNodeChild[];
+export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
 export type VNodeProps = {
   key?: string | number;

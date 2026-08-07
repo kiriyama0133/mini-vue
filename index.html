@@ -10,7 +10,7 @@
         </div>
     </body>
     <script type="module">
-        import { render, h, Text, Fragment } from './build/output/vue-mini.es.js'
+        import { render, h, Text, Fragment, computed, ref } from './build/output/vue-mini.es.js'
         // import { render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
 
 //effect
@@ -106,45 +106,65 @@
 // vue-component render
 const app = document.getElementById('app')
 const Child = {
-    props: ['title', 'count', 'age'],
-    render(proxy) {
-        return h({
-            type: Fragment,
-            children: [
-                h({
-                    type: Text,
-                    children: "my name is " + this.title,
-                    props: this.$attrs,
-                }),
-                h({
-                    type: "a",
-                    props: this.$attrs,
-                    children: proxy.age
-                })
-            ]
-        })
-    }
-}
+    setup(props, { slots }) {
+      return () => {
+        const children = []
 
-const Parent = {
-    data() {
-        return {
-            title: 'hello',
-            age: 22
+        const header = slots.header
+        const content = slots.default
+        const footer = slots.footer
+
+        if (header) {
+          children.push(header())
         }
-    },
-    mounted() {
-        setTimeout(() => {
-            this.title = 'world'
-        }, 1000)
+
+        if (content) {
+          children.push(content())
+        }
+
+        if (footer) {
+          children.push(footer())
+        }
+
+        return h({
+          type: 'section',
+          children
+        })
+      }
+    }
+  }
+const Parent = {
+    setup(){
+        const count = ref(1)
+        const double = computed(() => count.value * 2)
+        function increment() {
+            count.value ++
+        }
+        return {
+            count,
+            double,
+            increment
+        }
     },
     render(proxy) {
         return h({
             type: Child,
+            children: {
+                default: () => 
+                h({
+                    type: 'span',
+                    children: 'default slot'
+                    }
+                ),
+                header: () => 
+                    h({
+                        type: 'span',
+                        children: 'header'
+                    })
+            },
             props: {
-                title: this.title,
-                age: this.age,
-                class: "color",
+                count: this.count,
+                increment: this.increment,
                 style: {
                     color: 'red'
                 }

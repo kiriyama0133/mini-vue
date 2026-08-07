@@ -19,6 +19,7 @@ import { effect, ReactiveEffect } from '../effect';
 import { queueJob } from './schedular';
 import { initProps, updateProps } from '../utils/props';
 import { proxyRefs } from '../ref';
+import { initSlots } from './slot';
 
 export { h } from './h';
 export const Text = Symbol('Text');
@@ -260,12 +261,14 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       type: vnode.type,
       setupState: {},
       render: null,
+      slots: {},
       subTree: null,
       isMounted: false,
     };
   };
   const setupComponent = (instance: ComponentInstance) => {
     initProps(instance, instance.vnode.props);
+    initSlots(instance, instance.vnode.children);
     const Component = instance.type;
     instance.render = Component.render ?? null;
     if (Component.data) {
@@ -274,6 +277,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     if (Component.setup) {
       const setupContext = {
         attrs: instance.attrs,
+        slots: instance.slots,
       };
       const setupResult = Component.setup(instance.props, setupContext);
       if (isFunction(setupResult)) {
@@ -285,7 +289,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     }
     instance.proxy = new Proxy(instance, {
       get(target, key) {
-        const { setupState, data, props, attrs } = target;
+        const { setupState, data, props, attrs, slots } = target;
         if (typeof key === 'symbol') {
           return;
         }
@@ -300,6 +304,9 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         }
         if (key === '$attrs') {
           return attrs;
+        }
+        if (key === '$slots') {
+          return slots;
         }
       },
       set(target, key, value) {

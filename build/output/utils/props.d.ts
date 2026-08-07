@@ -5,3 +5,4 @@ export declare const updateProps: (
   prev: VNodeProps,
   next: VNodeProps
 ) => void;
+export declare const initProps: (instance: ComponentInstance, rawProps: any) => void;
