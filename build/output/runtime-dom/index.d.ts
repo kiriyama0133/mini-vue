@@ -14,5 +14,6 @@ declare const renderOptions: {
   setText: (node: import('./nodeOps').MiniText, text: string) => void;
   parentNode: (node: import('./nodeOps').MiniNode) => ParentNode | null;
   nextSibling: (node: import('./nodeOps').MiniNode) => ChildNode | null;
+  querySelector: (selector: string) => Element | null;
 };
 export { renderOptions };

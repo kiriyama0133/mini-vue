@@ -1,8 +1,11 @@
+import { Emit, Expose } from './emit';
 import { Slots } from './slot';
 export type SetupProps = Readonly<Record<string, any>>;
 export interface SetupContext {
   attrs: Record<string, any>;
   slots: Slots;
+  emit: Emit;
+  expose: Expose;
 }
 export interface VNode {
   type: any | Symbol;
@@ -17,6 +20,7 @@ export interface VNode {
 export interface Component {
   setup?: (setupProps: SetupProps, setupContext: SetupContext) => any;
   render?: () => VNode;
+  expose: Expose;
   data?: () => Record<string, any>;
   props?: string[] | Record<string, any>;
   mounted?: (proxy: any) => void;
@@ -27,6 +31,8 @@ export interface ComponentInstance {
   slots: Slots;
   props: Record<string, any>;
   attrs: Record<string, any>;
+  emit: Emit;
+  exposed: Record<string, unknown>;
   proxy: any;
   update: Function | null;
   type: Component;
@@ -52,6 +58,7 @@ export type VNodeType = string | Symbol;
 export type Container = Element & {
   _vnode?: VNode | null;
 };
+export declare function emit(instance: ComponentInstance, event: string, ...args: any[]): void;
 export declare function isVNode(vnode: any): vnode is VNode;
 export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
 export declare function isText(node: Node): node is Text;

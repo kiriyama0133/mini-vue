@@ -11,6 +11,7 @@ export declare const nodeOps: {
   setText: typeof setText;
   parentNode: typeof parentNode;
   nextSibling: typeof nextSibling;
+  querySelector: typeof querySelector;
 };
 export declare enum NodeTypes {
   ELEMENT = 1,
@@ -29,4 +30,5 @@ declare function setElementText(el: MiniNode, text: string): void;
 declare function setText(node: MiniText, text: string): void;
 declare function parentNode(node: MiniNode): ParentNode | null;
 declare function nextSibling(node: MiniNode): ChildNode | null;
+declare function querySelector(selector: string): Element | null;
 export {};

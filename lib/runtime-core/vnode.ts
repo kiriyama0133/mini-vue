@@ -1,10 +1,8 @@
 //lib/runtime-core/vnode.ts
 
 import { camelize, toHandlerKey } from '../utils/object';
+import { Emit, Expose } from './emit';
 import { Slots } from './slot';
-
-export type Emit = (event: string, ...args: unknown[]) => void;
-export type Expose = (exposed?: Record<string, unknown>) => void;
 export type SetupProps = Readonly<Record<string, any>>;
 export interface SetupContext {
   attrs: Record<string, any>; // 没有被声明为 props 的属性

@@ -9,7 +9,6 @@ import {
   isText,
   ComponentInstance,
   VNodeProps,
-  emit,
 } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
@@ -21,10 +20,12 @@ import { queueJob } from './schedular';
 import { initProps, updateProps } from '../utils/props';
 import { proxyRefs } from '../ref';
 import { initSlots } from './slot';
+import { emit } from './emit';
 
 export { h } from './h';
 export const Text = Symbol('Text');
 export const Fragment = Symbol('Fragnment');
+export { Teleport } from '../runtime-core/teleport';
 export function createRenderer(RenderOptions: typeof renderOptions) {
   const {
     createElement: hostCreateElement,
@@ -36,6 +37,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     parentNode: hostParentNode,
     nextSibling: hostNextSibling,
     patchProp: hostPatchProp,
+    querySelector: hostQuerySelector,
   } = RenderOptions;
   // diff
   const patchKeyedChildren = (c1: VNode[], c2: VNode[], container: Container) => {
@@ -174,16 +176,6 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       /**
        * ARRAY -> TEXT
-       *
-       * old:
-       * <div>
-       *   <span></span>
-       * </div>
-       *
-       * new:
-       * <div>
-       *   hello
-       * </div>
        */
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         unmountChildren(c1 as VNode[]);
@@ -199,14 +191,6 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
       /**
        * TEXT -> ARRAY
-       *
-       * old:
-       * <div>hello</div>
-       *
-       * new:
-       * <div>
-       *   <span></span>
-       * </div>
        */
       if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
         hostSetElementText(container, '');
@@ -214,8 +198,6 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       }
       /**
        * ARRAY -> ARRAY
-       *
-       * 后续实现 keyed diff
        */
       else if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         patchKeyedChildren(c1 as VNode[], c2 as VNode[], container);
@@ -438,6 +420,15 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
           console.log('[patch]: component');
           processComponent(n1, n2, container, anchor);
+        } else if (shapeFlag & ShapeFlags.TELEPORT) {
+          type.process(n1, n2, container, anchor, {
+            mountChildren,
+            patchChildren,
+            unmountChildren,
+            createText: hostCreateText,
+            insert: hostInsert,
+            querySelector: hostQuerySelector,
+          });
         }
         break;
     }
@@ -448,6 +439,9 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         unmountChildren(vnode.children as VNode[]);
       }
       return;
+    }
+    if (vnode.shapeFlag & ShapeFlags.TELEPORT && Array.isArray(vnode.children)) {
+      unmountChildren(vnode.children as VNode[]);
     }
     if (vnode.el) {
       hostRemove(vnode.el);

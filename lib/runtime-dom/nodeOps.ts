@@ -14,6 +14,7 @@ export const nodeOps = {
   setText,
   parentNode,
   nextSibling,
+  querySelector,
 };
 export enum NodeTypes {
   ELEMENT = 1,
@@ -48,4 +49,7 @@ function parentNode(node: MiniNode) {
 }
 function nextSibling(node: MiniNode) {
   return node.nextSibling;
+}
+function querySelector(selector: string) {
+  return document.querySelector(selector);
 }

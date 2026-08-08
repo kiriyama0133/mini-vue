@@ -1,6 +1,7 @@
 //lib/runtime-core/h.ts
 import { ShapeFlags } from '../shared/shapeFlags';
-import { isObject, isString, isArray } from '../utils/object';
+import { isObject, isString, isArray, isFunction } from '../utils/object';
+import { isTeleport } from './teleport';
 import { VNodeChildren, VNode, VNodeProps, isVNode, VNodeOptions } from './vnode';
 
 export function h({ type, props, children }: VNodeOptions) {
@@ -9,9 +10,13 @@ export function h({ type, props, children }: VNodeOptions) {
 function createVNode(type: any, props?: VNodeProps, children?: VNodeChildren) {
   const shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT
-    : isObject(type)
-      ? ShapeFlags.STATEFUL_COMPONENT
-      : 0;
+    : isTeleport(type)
+      ? ShapeFlags.TELEPORT
+      : isObject(type)
+        ? ShapeFlags.STATEFUL_COMPONENT
+        : isFunction(type)
+          ? ShapeFlags.FUNCTIONAL_COMPONENT
+          : 0;
   const vnode: VNode = {
     __v_isVnode: true,
     type,
