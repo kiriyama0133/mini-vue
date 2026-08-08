@@ -13,3 +13,14 @@ export function isFunction(value: any): value is Function {
 export function hasOwn(target: object, key: PropertyKey) {
   return Object.prototype.hasOwnProperty.call(target, key);
 }
+export const camelize = (value: string): string => {
+  return value.replace(/-(\w)/g, (_, char: string) => {
+    return char ? char.toUpperCase() : '';
+  });
+};
+export const capitalize = (value: string): string => {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+};
+export const toHandlerKey = (value: string): string => {
+  return value ? `on${capitalize(value)}` : '';
+};

@@ -1,13 +1,16 @@
 //lib/runtime-core/vnode.ts
 
+import { camelize, toHandlerKey } from '../utils/object';
 import { Slots } from './slot';
 
+export type Emit = (event: string, ...args: unknown[]) => void;
+export type Expose = (exposed?: Record<string, unknown>) => void;
 export type SetupProps = Readonly<Record<string, any>>;
 export interface SetupContext {
   attrs: Record<string, any>; // 没有被声明为 props 的属性
   slots: Slots; // 父组件传入的插槽
-  // emit: (event: string, ...args: any[]) => void // 触发组件事件
-  // expose: (exposed?: Record<string, any>) => void // 决定父组件通过 ref 能访问哪些内容
+  emit: Emit; // 触发组件事件
+  expose: Expose; // 决定父组件通过 ref 能访问哪些内容
 }
 export interface VNode {
   type: any | Symbol;
@@ -22,6 +25,7 @@ export interface VNode {
 export interface Component {
   setup?: (setupProps: SetupProps, setupContext: SetupContext) => any;
   render?: () => VNode;
+  expose: Expose;
   data?: () => Record<string, any>;
   props?: string[] | Record<string, any>;
   mounted?: (proxy: any) => void;
@@ -32,6 +36,8 @@ export interface ComponentInstance {
   slots: Slots;
   props: Record<string, any>;
   attrs: Record<string, any>;
+  emit: Emit;
+  exposed: Record<string, unknown>;
   proxy: any;
   update: Function | null;
   type: Component;
@@ -57,6 +63,14 @@ export type VNodeType = string | Symbol;
 export type Container = Element & {
   _vnode?: VNode | null;
 };
+export function emit(instance: ComponentInstance, event: string, ...args: any[]): void {
+  const { props } = instance;
+  const handlerName = toHandlerKey(camelize(event));
+  const handler = props[handlerName];
+  if (typeof handler === 'function') {
+    handler(...args);
+  }
+}
 export function isVNode(vnode: any): vnode is VNode {
   return vnode.__v_isVnode;
 }

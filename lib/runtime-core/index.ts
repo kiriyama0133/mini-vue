@@ -9,6 +9,7 @@ import {
   isText,
   ComponentInstance,
   VNodeProps,
+  emit,
 } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
@@ -251,10 +252,12 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
   };
   // region: component-start
   const createComponentInstance = (vnode: VNode): ComponentInstance => {
-    return {
+    const instance: ComponentInstance = {
       vnode: vnode,
       data: {},
       attrs: {},
+      emit: () => {},
+      exposed: {},
       proxy: null,
       update: null,
       props: vnode.props || {},
@@ -265,6 +268,8 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       subTree: null,
       isMounted: false,
     };
+    instance.emit = emit.bind(null, instance);
+    return instance;
   };
   const setupComponent = (instance: ComponentInstance) => {
     initProps(instance, instance.vnode.props);
@@ -278,6 +283,10 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       const setupContext = {
         attrs: instance.attrs,
         slots: instance.slots,
+        emit: instance.emit,
+        expose(exposed = {}) {
+          instance.exposed = exposed;
+        },
       };
       const setupResult = Component.setup(instance.props, setupContext);
       if (isFunction(setupResult)) {
@@ -289,7 +298,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     }
     instance.proxy = new Proxy(instance, {
       get(target, key) {
-        const { setupState, data, props, attrs, slots } = target;
+        const { setupState, data, props, attrs, slots, emit } = target;
         if (typeof key === 'symbol') {
           return;
         }
@@ -301,6 +310,9 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         }
         if (hasOwn(props, key)) {
           return props[key];
+        }
+        if (key === '$emit') {
+          return emit;
         }
         if (key === '$attrs') {
           return attrs;
