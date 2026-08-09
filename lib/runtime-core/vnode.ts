@@ -44,7 +44,7 @@ export interface ComponentInstance {
   subTree: VNode | null;
   isMounted: boolean;
   parent: ComponentInstance | null;
-  // provides: Record<ProptertyKey, any>
+  provides: Record<PropertyKey, unknown>;
 }
 export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;

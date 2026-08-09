@@ -14,16 +14,29 @@ export type PatchFunction = (
   n1: VNode | null,
   n2: VNode,
   container: Container,
-  anchor?: Node | null
+  anchor?: Node | null,
+  parentComponent?: ComponentInstance | null
 ) => void;
 
 export interface ComponentRendererInternals {
   patch: PatchFunction;
 }
 
-const createComponentInstance = (vnode: VNode): ComponentInstance => {
+let currentInstance: ComponentInstance | null = null;
+export function getCurrentInstance(): ComponentInstance | null {
+  return currentInstance;
+}
+function setCurrentInstance(instance: ComponentInstance | null): void {
+  currentInstance = instance;
+}
+const createComponentInstance = (
+  vnode: VNode,
+  parent: ComponentInstance | null
+): ComponentInstance => {
   const instance: ComponentInstance = {
     vnode,
+    parent,
+    provides: parent ? parent.provides : Object.create(null),
     data: {},
     attrs: {},
     emit: () => {},
@@ -37,7 +50,6 @@ const createComponentInstance = (vnode: VNode): ComponentInstance => {
     slots: {},
     subTree: null,
     isMounted: false,
-    parent: null,
   };
   instance.emit = emit.bind(null, instance);
   return instance;
@@ -63,8 +75,13 @@ const setupComponent = (instance: ComponentInstance) => {
         instance.exposed = exposed;
       },
     };
-    const setupResult = Component.setup(instance.props, setupContext);
-
+    setCurrentInstance(instance); // setup-entry
+    let setupResult;
+    try {
+      setupResult = Component.setup(instance.props, setupContext);
+    } finally {
+      setCurrentInstance(null); // setup-out
+    }
     if (isFunction(setupResult)) {
       instance.render = setupResult;
     } else if (isObject(setupResult)) {
@@ -130,7 +147,7 @@ const setupRenderEffect = (
     if (!instance.isMounted) {
       const subTree = instance.render?.call(instance.proxy, instance.proxy);
       instance.subTree = subTree;
-      internals.patch(null, subTree, container, anchor);
+      internals.patch(null, subTree, container, anchor, instance); // render
       vnode.el = subTree.el;
       instance.isMounted = true;
       instance.type.mounted?.call(instance.proxy, instance.proxy);
@@ -138,7 +155,7 @@ const setupRenderEffect = (
       const prevTree = instance.subTree;
       const nextTree = instance.render?.call(instance.proxy, instance.proxy);
       instance.subTree = nextTree;
-      internals.patch(prevTree, nextTree, container, anchor);
+      internals.patch(prevTree, nextTree, container, anchor, instance); // update
     }
   };
 
@@ -154,10 +171,11 @@ const mountComponent = (
   vnode: VNode,
   container: Container,
   anchor: Node | null,
+  parentComponent: ComponentInstance | null,
   internals: ComponentRendererInternals
 ) => {
   console.log('[mountComponent]: ', vnode);
-  const instance = createComponentInstance(vnode);
+  const instance = createComponentInstance(vnode, parentComponent);
   vnode.component = instance;
   setupComponent(instance);
   setupRenderEffect(instance, vnode, container, anchor, internals);
@@ -182,11 +200,12 @@ export const processComponent = (
   n2: VNode,
   container: Container,
   anchor: Node | null,
+  parentComponent: ComponentInstance | null,
   internals: ComponentRendererInternals
 ) => {
   console.log('[processComponent]');
   if (n1 === null) {
-    mountComponent(n2, container, anchor, internals);
+    mountComponent(n2, container, anchor, parentComponent, internals);
   } else {
     updateComponent(n1, n2);
   }

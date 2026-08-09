@@ -1,6 +1,6 @@
 //lib/runtime-core/index.ts
 import { renderOptions } from '../runtime-dom';
-import { VNode, Container, isSameVNode, isText } from './vnode';
+import { VNode, Container, isSameVNode, isText, ComponentInstance } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
 import { MiniElement } from '../runtime-dom/nodeOps';
@@ -24,7 +24,12 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     querySelector: hostQuerySelector,
   } = RenderOptions;
   // diff
-  const patchKeyedChildren = (c1: VNode[], c2: VNode[], container: Container) => {
+  const patchKeyedChildren = (
+    c1: VNode[],
+    c2: VNode[],
+    container: Container,
+    parentComponent: ComponentInstance | null
+  ) => {
     console.log('TODO: diff', c1, c2);
     let i = 0;
     let e1 = c1.length - 1; //tail
@@ -35,7 +40,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       const n2 = c2[i];
       if (isSameVNode(n1, n2)) {
         // recursion diff
-        patch(n1, n2, container);
+        patch(n1, n2, container, null, parentComponent);
       } else {
         break;
       }
@@ -47,7 +52,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       const n1 = c1[e1];
       const n2 = c2[e2];
       if (isSameVNode(n1, n2)) {
-        patch(n1, n2, container);
+        patch(n1, n2, container, null, parentComponent);
       } else break;
       e1--;
       e2--;
@@ -59,7 +64,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         const anchor = c2[nextPos]?.el ?? null;
 
         while (i <= e2) {
-          patch(null, c2[i], container, anchor);
+          patch(null, c2[i], container, anchor, parentComponent);
           i++;
         }
       }
@@ -83,7 +88,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         if (newIndex == undefined) {
           unmount(vnode);
         } else {
-          patch(vnode, c2[newIndex], container);
+          patch(vnode, c2[newIndex], container, null, parentComponent);
         }
       }
       // insertBefore
@@ -93,20 +98,29 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         let anchor = newIndex + 1 < c2.length ? c2[newIndex + 1].el : null;
         let vnode = c2[newIndex];
         if (!vnode.el) {
-          patch(null, vnode, container, anchor);
+          patch(null, vnode, container, anchor, parentComponent);
         } else {
           hostInsert(vnode.el!, container, anchor);
         }
       }
     }
   };
-  const mountChildren = (children: VNode[], parent: Container) => {
+  const mountChildren = (
+    children: VNode[],
+    parent: Container,
+    parentComponent: ComponentInstance | null
+  ) => {
     console.log('[mountChildren]: ', children, parent, 'mount');
     for (const child of children) {
-      patch(null, child, parent);
+      patch(null, child, parent, null, parentComponent);
     }
   };
-  const mountElement = (vnode: VNode, container: Container, anchor: Node | null) => {
+  const mountElement = (
+    vnode: VNode,
+    container: Container,
+    anchor: Node | null,
+    parentComponent: ComponentInstance | null
+  ) => {
     const { type, props, children, shapeFlag } = vnode;
     const el = (vnode.el = hostCreateElement(type));
     if (props) {
@@ -117,7 +131,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       hostSetElementText(el, children as string);
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-      mountChildren(children as VNode[], el);
+      mountChildren(children as VNode[], el, parentComponent);
     }
     hostInsert(el, container, anchor);
   };
@@ -130,16 +144,17 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     n1: VNode | null,
     n2: VNode,
     container: Container,
-    anchor: Node | null
+    anchor: Node | null,
+    parentComponent: ComponentInstance | null
   ) => {
     console.log(`[processElement]:`, n1, n2, container, 'patch');
     if (n1 === null) {
-      mountElement(n2, container, anchor);
+      mountElement(n2, container, anchor, parentComponent);
     } else {
-      patchElement(n1, n2);
+      patchElement(n1, n2, parentComponent);
     }
   };
-  const patchElement = (n1: VNode, n2: VNode) => {
+  const patchElement = (n1: VNode, n2: VNode, parentComponent: ComponentInstance | null) => {
     let el = (n2.el = n1.el as MiniElement);
     if (!el) {
       return;
@@ -147,9 +162,14 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     let oldProps = n1.props || {};
     let newProps = n2.props || {};
     patchProps(el as MiniElement, oldProps, newProps);
-    patchChildren(n1, n2, el);
+    patchChildren(n1, n2, el, parentComponent);
   };
-  const patchChildren = (n1: VNode, n2: VNode, container: Container) => {
+  const patchChildren = (
+    n1: VNode,
+    n2: VNode,
+    container: Container,
+    parentComponent: ComponentInstance | null
+  ) => {
     console.log(`[patchChildren]: `, n1, n2, 'patchChildren');
     const c1 = n1.children;
     const c2 = n2.children;
@@ -178,13 +198,13 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
        */
       if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
         hostSetElementText(container, '');
-        mountChildren(c2 as VNode[], container);
+        mountChildren(c2 as VNode[], container, parentComponent);
       }
       /**
        * ARRAY -> ARRAY
        */
       else if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-        patchKeyedChildren(c1 as VNode[], c2 as VNode[], container);
+        patchKeyedChildren(c1 as VNode[], c2 as VNode[], container, parentComponent);
       }
     }
     // 新节点没有 children
@@ -216,16 +236,27 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       }
     }
   };
-  const processFragment = (n1: VNode | null, n2: VNode, conatiner: Container) => {
+  const processFragment = (
+    n1: VNode | null,
+    n2: VNode,
+    conatiner: Container,
+    parentComponent: ComponentInstance | null
+  ) => {
     if (n1 === null) {
       if (n2.children) {
-        mountChildren(n2.children as VNode[], conatiner);
+        mountChildren(n2.children as VNode[], conatiner, parentComponent);
       }
     } else {
-      patchChildren(n1, n2, conatiner);
+      patchChildren(n1, n2, conatiner, parentComponent);
     }
   };
-  const patch = (n1: VNode | null, n2: VNode, container: Container, anchor: Node | null = null) => {
+  const patch = (
+    n1: VNode | null,
+    n2: VNode,
+    container: Container,
+    anchor: Node | null = null,
+    parentComponent: ComponentInstance | null = null
+  ) => {
     if (n1 === n2) {
       return;
     }
@@ -242,14 +273,14 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         processText(n1, n2, container);
         break;
       case Fragment:
-        processFragment(n1, n2, container);
+        processFragment(n1, n2, container, parentComponent);
         break;
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {
-          processElemet(n1, n2, container, anchor);
+          processElemet(n1, n2, container, anchor, parentComponent);
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
           console.log('[patch]: component');
-          processComponent(n1, n2, container, anchor, { patch });
+          processComponent(n1, n2, container, anchor, parentComponent, { patch });
         } else if (shapeFlag & ShapeFlags.TELEPORT) {
           type.process(n1, n2, container, anchor, {
             mountChildren,

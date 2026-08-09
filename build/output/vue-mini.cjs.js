@@ -418,9 +418,11 @@ function we(e) {
     ? !1
     : Object.values(e).every((e) => typeof e == `function` || e === void 0);
 }
-var Te = (e) => {
-    let t = {
+var Te = (e, t) => {
+    let n = {
       vnode: e,
+      parent: t,
+      provides: t ? t.provides : Object.create(null),
       data: {},
       attrs: {},
       emit: () => {},
@@ -434,9 +436,8 @@ var Te = (e) => {
       slots: {},
       subTree: null,
       isMounted: !1,
-      parent: null,
     };
-    return ((t.emit = ye.bind(null, t)), t);
+    return ((n.emit = ye.bind(null, n)), n);
   },
   Ee = (t) => {
     (ve(t, t.vnode.props), Ce(t, t.vnode.children));
@@ -450,7 +451,11 @@ var Te = (e) => {
             t.exposed = e;
           },
         },
+        a;
+      try {
         a = i.setup(t.props, r);
+      } finally {
+      }
       n(a) ? (t.render = a) : e(a) && (t.setupState = T(a));
     }
     t.proxy = new Proxy(t, {
@@ -482,11 +487,11 @@ var Te = (e) => {
         if (e.isMounted) {
           let t = e.subTree,
             a = e.render?.call(e.proxy, e.proxy);
-          ((e.subTree = a), i.patch(t, a, n, r));
+          ((e.subTree = a), i.patch(t, a, n, r, e));
         } else {
           let a = e.render?.call(e.proxy, e.proxy);
           ((e.subTree = a),
-            i.patch(null, a, n, r),
+            i.patch(null, a, n, r, e),
             (t.el = a.el),
             (e.isMounted = !0),
             e.type.mounted?.call(e.proxy, e.proxy));
@@ -498,10 +503,10 @@ var Te = (e) => {
       });
     ((o = e.update = () => s.run()), o());
   },
-  Oe = (e, t, n, r) => {
+  Oe = (e, t, n, r, i) => {
     console.log(`[mountComponent]: `, e);
-    let i = Te(e);
-    ((e.component = i), Ee(i), De(i, e, t, n, r));
+    let a = Te(e, r);
+    ((e.component = a), Ee(a), De(a, e, t, n, i));
   },
   ke = (e, t) => {
     let n = (t.component = e.component);
@@ -510,8 +515,8 @@ var Te = (e) => {
       i = t.props ?? {};
     ((n.vnode = t), (t.el = e.el), _e(n, r, i), n.update?.());
   },
-  Ae = (e, t, n, r, i) => {
-    (console.log(`[processComponent]`), e === null ? Oe(t, n, r, i) : ke(e, t));
+  Ae = (e, t, n, r, i, a) => {
+    (console.log(`[processComponent]`), e === null ? Oe(t, n, r, i, a) : ke(e, t));
   },
   je = {
     __is_Teleport: !0,
@@ -592,90 +597,90 @@ function $(e) {
       patchProp: l,
       querySelector: u,
     } = e,
-    d = (e, t, n) => {
+    d = (e, t, n, i) => {
       console.log(`TODO: diff`, e, t);
-      let i = 0,
-        a = e.length - 1,
-        o = t.length - 1;
-      for (; i <= a && i <= o;) {
-        let r = e[i],
-          a = t[i];
-        if (G(r, a)) b(r, a, n);
-        else break;
-        i++;
-      }
-      for (console.log(`[diff]: `, i, a, o); i <= a && i <= o;) {
+      let a = 0,
+        o = e.length - 1,
+        s = t.length - 1;
+      for (; a <= o && a <= s;) {
         let r = e[a],
-          i = t[o];
-        if (G(r, i)) b(r, i, n);
+          o = t[a];
+        if (G(r, o)) b(r, o, n, null, i);
         else break;
-        (a--, o--);
+        a++;
       }
-      if ((console.log(`[diff]: `, i, a, o), i > a)) {
-        if (i <= o) {
-          let e = t[o + 1]?.el ?? null;
-          for (; i <= o;) (b(null, t[i], n, e), i++);
+      for (console.log(`[diff]: `, a, o, s); a <= o && a <= s;) {
+        let r = e[o],
+          a = t[s];
+        if (G(r, a)) b(r, a, n, null, i);
+        else break;
+        (o--, s--);
+      }
+      if ((console.log(`[diff]: `, a, o, s), a > o)) {
+        if (a <= s) {
+          let e = t[s + 1]?.el ?? null;
+          for (; a <= s;) (b(null, t[a], n, e, i), a++);
         }
-      } else if (i > o) for (; i <= a;) (x(e[i]), i++);
+      } else if (a > s) for (; a <= o;) (x(e[a]), a++);
       else {
-        let s = i,
-          c = i,
-          l = new Map();
-        for (let e = c; e <= o; e++) {
+        let c = a,
+          l = a,
+          u = new Map();
+        for (let e = l; e <= s; e++) {
           let n = t[e];
-          l.set(n.key, e);
+          u.set(n.key, e);
         }
-        for (let r = s; r <= a; r++) {
-          let i = e[r],
-            a = l.get(i.key);
-          a == null ? x(i) : b(i, t[a], n);
+        for (let r = c; r <= o; r++) {
+          let a = e[r],
+            o = u.get(a.key);
+          o == null ? x(a) : b(a, t[o], n, null, i);
         }
-        let u = o - c + 1;
-        for (let e = u - 1; e >= 0; e--) {
-          let i = c + e,
-            a = i + 1 < t.length ? t[i + 1].el : null,
-            o = t[i];
-          o.el ? r(o.el, n, a) : b(null, o, n, a);
+        let d = s - l + 1;
+        for (let e = d - 1; e >= 0; e--) {
+          let a = l + e,
+            o = a + 1 < t.length ? t[a + 1].el : null,
+            s = t[a];
+          s.el ? r(s.el, n, o) : b(null, s, n, o, i);
         }
       }
     },
-    f = (e, t) => {
+    f = (e, t, n) => {
       console.log(`[mountChildren]: `, e, t, `mount`);
-      for (let n of e) b(null, n, t);
+      for (let r of e) b(null, r, t, null, n);
     },
-    p = (e, n, i) => {
-      let { type: o, props: s, children: c, shapeFlag: u } = e,
-        d = (e.el = t(o));
-      if (s) for (let e in s) l(d, e, null, s[e]);
-      (u & K.TEXT_CHILDREN ? a(d, c) : u & K.ARRAY_CHILDREN && f(c, d), r(d, n, i));
+    p = (e, n, i, o) => {
+      let { type: s, props: c, children: u, shapeFlag: d } = e,
+        p = (e.el = t(s));
+      if (c) for (let e in c) l(p, e, null, c[e]);
+      (d & K.TEXT_CHILDREN ? a(p, u) : d & K.ARRAY_CHILDREN && f(u, p, o), r(p, n, i));
     },
     m = (e) => {
       e.forEach((e) => {
         x(e);
       });
     },
-    h = (e, t, n, r) => {
-      (console.log(`[processElement]:`, e, t, n, `patch`), e === null ? p(t, n, r) : g(e, t));
+    h = (e, t, n, r, i) => {
+      (console.log(`[processElement]:`, e, t, n, `patch`), e === null ? p(t, n, r, i) : g(e, t, i));
     },
-    g = (e, t) => {
-      let n = (t.el = e.el);
-      n && (pe(n, e.props || {}, t.props || {}), _(e, t, n));
+    g = (e, t, n) => {
+      let r = (t.el = e.el);
+      r && (pe(r, e.props || {}, t.props || {}), _(e, t, r, n));
     },
-    _ = (e, t, n) => {
+    _ = (e, t, n, r) => {
       console.log(`[patchChildren]: `, e, t, `patchChildren`);
-      let r = e.children,
-        i = t.children,
-        o = e.shapeFlag,
-        s = t.shapeFlag;
-      s & K.TEXT_CHILDREN
-        ? (o & K.ARRAY_CHILDREN && m(r), r !== i && a(n, i))
-        : s & K.ARRAY_CHILDREN
-          ? o & K.TEXT_CHILDREN
-            ? (a(n, ``), f(i, n))
-            : o & K.ARRAY_CHILDREN && d(r, i, n)
-          : o & K.TEXT_CHILDREN
+      let i = e.children,
+        o = t.children,
+        s = e.shapeFlag,
+        c = t.shapeFlag;
+      c & K.TEXT_CHILDREN
+        ? (s & K.ARRAY_CHILDREN && m(i), i !== o && a(n, o))
+        : c & K.ARRAY_CHILDREN
+          ? s & K.TEXT_CHILDREN
+            ? (a(n, ``), f(o, n, r))
+            : s & K.ARRAY_CHILDREN && d(i, o, n, r)
+          : s & K.TEXT_CHILDREN
             ? a(n, ``)
-            : o & K.ARRAY_CHILDREN && m(r);
+            : s & K.ARRAY_CHILDREN && m(i);
     },
     v = (e, t, i) => {
       if (e === null) {
@@ -686,27 +691,27 @@ function $(e) {
         t.children !== e.children && n && he(n) && o(n, t.children);
       }
     },
-    y = (e, t, n) => {
-      e === null ? t.children && f(t.children, n) : _(e, t, n);
+    y = (e, t, n, r) => {
+      e === null ? t.children && f(t.children, n, r) : _(e, t, n, r);
     },
-    b = (e, t, i, a = null) => {
+    b = (e, t, i, a = null, o = null) => {
       if (e === t) return;
       e !== null && (G(e, t) || (console.log(`[patch<VNode>]`, e, t, `unmount`), x(e), (e = null)));
-      let { type: o, shapeFlag: s } = t;
-      switch (o) {
+      let { type: s, shapeFlag: c } = t;
+      switch (s) {
         case Z:
           v(e, t, i);
           break;
         case Q:
-          y(e, t, i);
+          y(e, t, i, o);
           break;
         default:
-          s & K.ELEMENT
-            ? h(e, t, i, a)
-            : s & K.COMPONENT
-              ? (console.log(`[patch]: component`), Ae(e, t, i, a, { patch: b }))
-              : s & K.TELEPORT &&
-                o.process(e, t, i, a, {
+          c & K.ELEMENT
+            ? h(e, t, i, a, o)
+            : c & K.COMPONENT
+              ? (console.log(`[patch]: component`), Ae(e, t, i, a, o, { patch: b }))
+              : c & K.TELEPORT &&
+                s.process(e, t, i, a, {
                   mountChildren: f,
                   patchChildren: _,
                   unmountChildren: m,
