@@ -43,6 +43,8 @@ export interface ComponentInstance {
   render: Function | null;
   subTree: VNode | null;
   isMounted: boolean;
+  parent: ComponentInstance | null;
+  // provides: Record<ProptertyKey, any>
 }
 export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
@@ -61,14 +63,6 @@ export type VNodeType = string | Symbol;
 export type Container = Element & {
   _vnode?: VNode | null;
 };
-export function emit(instance: ComponentInstance, event: string, ...args: any[]): void {
-  const { props } = instance;
-  const handlerName = toHandlerKey(camelize(event));
-  const handler = props[handlerName];
-  if (typeof handler === 'function') {
-    handler(...args);
-  }
-}
 export function isVNode(vnode: any): vnode is VNode {
   return vnode.__v_isVnode;
 }

@@ -40,6 +40,7 @@ export interface ComponentInstance {
   render: Function | null;
   subTree: VNode | null;
   isMounted: boolean;
+  parent: ComponentInstance | null;
 }
 export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
@@ -58,7 +59,6 @@ export type VNodeType = string | Symbol;
 export type Container = Element & {
   _vnode?: VNode | null;
 };
-export declare function emit(instance: ComponentInstance, event: string, ...args: any[]): void;
 export declare function isVNode(vnode: any): vnode is VNode;
 export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
 export declare function isText(node: Node): node is Text;

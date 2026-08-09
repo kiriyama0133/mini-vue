@@ -116,13 +116,13 @@ function S(t) {
 }
 //#endregion
 //#region lib/ref/index.ts
-function C(e) {
-  return w(e);
+function ee(e) {
+  return te(e);
 }
-function w(e) {
-  return new T(e);
+function te(e) {
+  return new ne(e);
 }
-var T = class {
+var ne = class {
   rawValue;
   __v_isRef = !0;
   _value;
@@ -131,22 +131,22 @@ var T = class {
     ((this.rawValue = e), (this._value = S(e)));
   }
   get value() {
-    return (E(this), this._value);
+    return (re(this), this._value);
   }
   set value(e) {
-    ((this.rawValue = e), (this._value = S(e)), D(this));
+    ((this.rawValue = e), (this._value = S(e)), ie(this));
   }
 };
-function E(e) {
+function re(e) {
   c && ((e.dep ||= /* @__PURE__ */ new Set()), v(e.dep));
 }
-function D(e) {
+function ie(e) {
   e.dep && x(e.dep);
 }
-function O(e) {
+function C(e) {
   return !!(e && e.__v_isRef);
 }
-var k = class {
+var w = class {
   _object;
   _key;
   constructor(e, t) {
@@ -160,63 +160,63 @@ var k = class {
     this._object[this._key] = e;
   }
 };
-function A(e, t) {
-  return new k(e, t);
+function ae(e, t) {
+  return new w(e, t);
 }
-function j(e) {
+function oe(e) {
   let t = {};
   for (let n in e) {
     let r = n;
-    t[r] = new k(e, r);
+    t[r] = new w(e, r);
   }
   return t;
 }
-function M(e) {
+function T(e) {
   return new Proxy(e, {
     get(e, t, n) {
       let r = Reflect.get(e, t, n);
-      return O(r) ? r.value : r;
+      return C(r) ? r.value : r;
     },
     set(e, t, n, r) {
       let i = Reflect.get(e, t, r);
-      return O(i) && !O(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
+      return C(i) && !C(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
     },
   });
 }
 //#endregion
 //#region lib/effect/computed.ts
-var N = /* @__PURE__ */ (function (e) {
+var E = /* @__PURE__ */ (function (e) {
   return ((e[(e.Dirty = 4)] = 'Dirty'), (e[(e.NoDirty = 0)] = 'NoDirty'), e);
 })({});
-function ee(e) {
-  return typeof e == 'function' ? new P(e, void 0) : new P(e.get, e.set);
+function se(e) {
+  return typeof e == 'function' ? new D(e, void 0) : new D(e.get, e.set);
 }
-var P = class {
+var D = class {
   getter;
   setter;
   __v_isRef = !0;
   dep;
-  dirtyLevel = N.Dirty;
+  dirtyLevel = E.Dirty;
   _value;
   effect;
   constructor(e, t) {
     ((this.getter = e),
       (this.setter = t),
       (this.effect = new u(this.getter, () => {
-        ((this.dirtyLevel = N.Dirty), ne(this));
+        ((this.dirtyLevel = E.Dirty), le(this));
       })));
   }
   set dirty(e) {
-    this.dirtyLevel = e ? N.Dirty : N.NoDirty;
+    this.dirtyLevel = e ? E.Dirty : E.NoDirty;
   }
   get dirty() {
-    return this.dirtyLevel === N.Dirty;
+    return this.dirtyLevel === E.Dirty;
   }
   get value() {
     return (
-      te(this),
-      this.dirtyLevel === N.Dirty &&
-        ((this._value = this.effect.run()), (this.dirtyLevel = N.NoDirty)),
+      ce(this),
+      this.dirtyLevel === E.Dirty &&
+        ((this._value = this.effect.run()), (this.dirtyLevel = E.NoDirty)),
       this._value
     );
   }
@@ -224,21 +224,21 @@ var P = class {
     this.setter ? this.setter?.call(this, e) : console.warn('computed ref is readonly');
   }
 };
-function te(e) {
+function ce(e) {
   c && ((e.dep ||= /* @__PURE__ */ new Set()), v(e.dep));
 }
-function ne(e) {
+function le(e) {
   e.dep && x(e.dep);
 }
 //#endregion
 //#region lib/effect/watch.ts
-function re(e, t, n) {
-  ie(e, t, n);
+function ue(e, t, n) {
+  de(e, t, n);
 }
-function ie(e, t, n) {
-  let r = (e) => F(e, n?.deep ? 1 : void 0),
+function de(e, t, n) {
+  let r = (e) => O(e, n?.deep ? 1 : void 0),
     i;
-  i = O(e) ? () => e.value : h(e) ? () => r(e) : () => e;
+  i = C(e) ? () => e.value : h(e) ? () => r(e) : () => e;
   let a,
     o = () => {
       let e = s.run();
@@ -248,42 +248,42 @@ function ie(e, t, n) {
   let s = new u(i, o);
   a = s.run();
 }
-function F(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
+function O(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
   if (typeof e != 'object' || !e || (t !== void 0 && n >= t) || r.has(e)) return e;
   r.add(e);
-  for (let i in e) F(e[i], t, n + 1, r);
+  for (let i in e) O(e[i], t, n + 1, r);
   return e;
 }
 //#endregion
 //#region lib/runtime-dom/nodeOps.ts
-var ae = {
-  createElement: oe,
-  createText: se,
-  insert: ce,
-  remove: le,
-  setElementText: ue,
-  setText: de,
+var k = {
+  createElement: A,
+  createText: j,
+  insert: M,
+  remove: N,
+  setElementText: P,
+  setText: F,
   parentNode: I,
   nextSibling: L,
   querySelector: R,
 };
-function oe(e) {
+function A(e) {
   return document.createElement(e);
 }
-function se(e) {
+function j(e) {
   return document.createTextNode(e);
 }
-function ce(e, t, n) {
+function M(e, t, n) {
   t.insertBefore(e, n || null);
 }
-function le(e) {
+function N(e) {
   let t = e.parentNode;
   t && t.removeChild(e);
 }
-function ue(e, t) {
+function P(e, t) {
   e.textContent = t;
 }
-function de(e, t) {
+function F(e, t) {
   e.nodeValue = t;
 }
 function I(e) {
@@ -367,7 +367,7 @@ function U(e, t, n, r) {
 }
 //#endregion
 //#region lib/runtime-dom/index.ts
-var W = Object.assign({ patchProp: U }, ae);
+var W = Object.assign({ patchProp: U }, k);
 //#endregion
 //#region lib/runtime-core/vnode.ts
 function me(e) {
@@ -397,21 +397,7 @@ var K = /* @__PURE__ */ (function (e) {
       e
     );
   })({}),
-  q = [],
-  J = !1,
-  ge = Promise.resolve();
-function _e() {
-  J = !1;
-  let e = q.slice();
-  q.length = 0;
-  for (let t of e) t();
-}
-function ve(e) {
-  (q.includes(e) || q.push(e), J || ((J = !0), ge.then(_e)));
-}
-//#endregion
-//#region lib/utils/props.ts
-var ye = (e, t) => {
+  ge = (e, t) => {
     let n = Object.keys(t);
     if (Object.keys(t).length !== Object.keys(e).length) return !0;
     for (let r = 0; r < n.length; r++) {
@@ -420,13 +406,13 @@ var ye = (e, t) => {
     }
     return !1;
   },
-  be = (e, t, n) => {
-    if (ye(t, n)) {
+  _e = (e, t, n) => {
+    if (ge(t, n)) {
       for (let t in e.props) e.props[t] = n[t];
       for (let t in e.props) t in n || delete e.props[t];
     }
   },
-  xe = (e, t) => {
+  ve = (e, t) => {
     let n = {},
       r = {},
       i = e.type.props || [];
@@ -434,64 +420,173 @@ var ye = (e, t) => {
     ((e.props = n), (e.attrs = r));
   };
 //#endregion
-//#region lib/runtime-core/slot.ts
-function Se(e, t) {
-  e.vnode.shapeFlag & K.SLOTS_CHILDREN && Ce(t) ? (e.slots = t) : (e.slots = {});
-}
-function Ce(e) {
-  return typeof e != 'object' || !e || Array.isArray(e) || me(e)
-    ? !1
-    : Object.values(e).every((e) => typeof e == 'function' || e === void 0);
-}
-//#endregion
 //#region lib/runtime-core/emit.ts
-function we(e, t, ...n) {
+function ye(e, t, ...n) {
   let { props: r } = e,
     a = r[o(i(t))];
   typeof a == 'function' && a(...n);
 }
 //#endregion
-//#region lib/runtime-core/teleport.ts
-var Y = {
-  __is_Teleport: !0,
-  process(e, t, n, r, i) {
-    let {
-        mountChildren: a,
-        patchChildren: o,
-        unmountChildren: s,
-        createText: c,
-        insert: l,
-        querySelector: u,
-      } = i,
-      d = X(t.props?.to, u);
-    if (!d) {
-      console.warn(`[Teleport]: target "${t.props?.to}" not found`);
-      return;
-    }
-    if (e === null) {
-      ((t.el = c('')), l(t.el, n, r), a(t.children, d));
-      return;
-    }
-    ((t.el = e.el),
-      X(e.props?.to, u) === d
-        ? o(e, t, d)
-        : (Array.isArray(e.children) && s(e.children),
-          Array.isArray(t.children) && a(t.children, d)));
+//#region lib/runtime-core/schedular.ts
+var q = [],
+  J = !1,
+  be = Promise.resolve();
+function xe() {
+  J = !1;
+  let e = q.slice();
+  q.length = 0;
+  for (let t of e) t();
+}
+function Se(e) {
+  (q.includes(e) || q.push(e), J || ((J = !0), be.then(xe)));
+}
+//#endregion
+//#region lib/runtime-core/slot.ts
+function Ce(e, t) {
+  e.vnode.shapeFlag & K.SLOTS_CHILDREN && we(t) ? (e.slots = t) : (e.slots = {});
+}
+function we(e) {
+  return typeof e != 'object' || !e || Array.isArray(e) || me(e)
+    ? !1
+    : Object.values(e).every((e) => typeof e == 'function' || e === void 0);
+}
+//#endregion
+//#region lib/runtime-core/component.ts
+var Te = (e) => {
+    let t = {
+      vnode: e,
+      data: {},
+      attrs: {},
+      emit: () => {},
+      exposed: {},
+      proxy: null,
+      update: null,
+      props: e.props || {},
+      type: e.type,
+      setupState: {},
+      render: null,
+      slots: {},
+      subTree: null,
+      isMounted: !1,
+      parent: null,
+    };
+    return ((t.emit = ye.bind(null, t)), t);
   },
-};
-function X(e, t) {
+  Ee = (t) => {
+    (ve(t, t.vnode.props), Ce(t, t.vnode.children));
+    let i = t.type;
+    if (((t.render = i.render ?? null), i.data && (t.data = g(i.data())), i.setup)) {
+      let r = {
+          attrs: t.attrs,
+          slots: t.slots,
+          emit: t.emit,
+          expose(e = {}) {
+            t.exposed = e;
+          },
+        },
+        a = i.setup(t.props, r);
+      n(a) ? (t.render = a) : e(a) && (t.setupState = T(a));
+    }
+    t.proxy = new Proxy(t, {
+      get(e, t) {
+        let { setupState: n, data: i, props: a, attrs: o, slots: s, emit: c } = e;
+        if (typeof t != 'symbol') {
+          if (r(n, t)) return n[t];
+          if (r(i, t)) return i[t];
+          if (r(a, t)) return a[t];
+          if (t === '$emit') return c;
+          if (t === '$attrs') return o;
+          if (t === '$slots') return s;
+        }
+      },
+      set(e, t, n) {
+        let { setupState: i, data: a, props: o } = e;
+        return typeof t == 'symbol'
+          ? !0
+          : r(i, t)
+            ? ((i[t] = n), !0)
+            : r(a, t)
+              ? ((a[t] = n), !0)
+              : (r(o, t) && console.warn('props is readonly'), !0);
+      },
+    });
+  },
+  De = (e, t, n, r, i) => {
+    let a = () => {
+        if (e.isMounted) {
+          let t = e.subTree,
+            a = e.render?.call(e.proxy, e.proxy);
+          ((e.subTree = a), i.patch(t, a, n, r));
+        } else {
+          let a = e.render?.call(e.proxy, e.proxy);
+          ((e.subTree = a),
+            i.patch(null, a, n, r),
+            (t.el = a.el),
+            (e.isMounted = !0),
+            e.type.mounted?.call(e.proxy, e.proxy));
+        }
+      },
+      o,
+      s = new u(a, () => {
+        Se(o);
+      });
+    ((o = e.update = () => s.run()), o());
+  },
+  Oe = (e, t, n, r) => {
+    console.log('[mountComponent]: ', e);
+    let i = Te(e);
+    ((e.component = i), Ee(i), De(i, e, t, n, r));
+  },
+  ke = (e, t) => {
+    let n = (t.component = e.component);
+    if (!n) throw Error('Component instance is missing');
+    let r = e.props ?? {},
+      i = t.props ?? {};
+    ((n.vnode = t), (t.el = e.el), _e(n, r, i), n.update?.());
+  },
+  Ae = (e, t, n, r, i) => {
+    (console.log('[processComponent]'), e === null ? Oe(t, n, r, i) : ke(e, t));
+  },
+  je = {
+    __is_Teleport: !0,
+    process(e, t, n, r, i) {
+      let {
+          mountChildren: a,
+          patchChildren: o,
+          unmountChildren: s,
+          createText: c,
+          insert: l,
+          querySelector: u,
+        } = i,
+        d = Y(t.props?.to, u);
+      if (!d) {
+        console.warn(`[Teleport]: target "${t.props?.to}" not found`);
+        return;
+      }
+      if (e === null) {
+        ((t.el = c('')), l(t.el, n, r), a(t.children, d));
+        return;
+      }
+      ((t.el = e.el),
+        Y(e.props?.to, u) === d
+          ? o(e, t, d)
+          : (Array.isArray(e.children) && s(e.children),
+            Array.isArray(t.children) && a(t.children, d)));
+    },
+  };
+function Y(e, t) {
   return typeof e == 'string' ? t(e) : e && typeof e == 'object' ? e : null;
 }
-var Te = (e) => !!(e && typeof e == 'object' && e.__is_Teleport);
+var Me = (e) => !!(e && typeof e == 'object' && e.__is_Teleport);
 //#endregion
 //#region lib/runtime-core/h.ts
-function Ee({ type: e, props: t, children: n }) {
-  return De(e, t, n);
+function Ne({ type: e, props: t, children: n }) {
+  return X(e, t, n);
 }
-function De(r, i, a) {
+function X(r, i, a) {
   let o = t(r)
       ? K.ELEMENT
-      : Te(r)
+      : Me(r)
         ? K.TELEPORT
         : e(r)
           ? K.STATEFUL_COMPONENT
@@ -507,9 +602,9 @@ function De(r, i, a) {
       el: null,
       shapeFlag: o,
     };
-  return (Oe(s), s);
+  return (Pe(s), s);
 }
-function Oe(t) {
+function Pe(t) {
   let { children: n } = t;
   n != null &&
     (Array.isArray(n)
@@ -522,269 +617,175 @@ function Oe(t) {
 //#region lib/runtime-core/index.ts
 var Z = Symbol('Text'),
   Q = Symbol('Fragnment');
-function $(t) {
+function $(e) {
   let {
-      createElement: i,
-      createText: a,
-      insert: o,
-      remove: s,
-      setElementText: c,
-      setText: l,
-      parentNode: d,
-      nextSibling: f,
-      patchProp: p,
-      querySelector: m,
-    } = t,
-    h = (e, t, n) => {
+      createElement: t,
+      createText: n,
+      insert: r,
+      remove: i,
+      setElementText: a,
+      setText: o,
+      parentNode: s,
+      nextSibling: c,
+      patchProp: l,
+      querySelector: u,
+    } = e,
+    d = (e, t, n) => {
       console.log('TODO: diff', e, t);
-      let r = 0,
-        i = e.length - 1,
-        a = t.length - 1;
-      for (; r <= i && r <= a;) {
-        let i = e[r],
-          a = t[r];
-        if (G(i, a)) j(i, a, n);
-        else break;
-        r++;
-      }
-      for (console.log('[diff]: ', r, i, a); r <= i && r <= a;) {
+      let i = 0,
+        a = e.length - 1,
+        o = t.length - 1;
+      for (; i <= a && i <= o;) {
         let r = e[i],
-          o = t[a];
-        if (G(r, o)) j(r, o, n);
+          a = t[i];
+        if (G(r, a)) b(r, a, n);
         else break;
-        (i--, a--);
+        i++;
       }
-      if ((console.log('[diff]: ', r, i, a), r > i)) {
-        if (r <= a) {
-          let e = t[a + 1]?.el ?? null;
-          for (; r <= a;) (j(null, t[r], n, e), r++);
+      for (console.log('[diff]: ', i, a, o); i <= a && i <= o;) {
+        let r = e[a],
+          i = t[o];
+        if (G(r, i)) b(r, i, n);
+        else break;
+        (a--, o--);
+      }
+      if ((console.log('[diff]: ', i, a, o), i > a)) {
+        if (i <= o) {
+          let e = t[o + 1]?.el ?? null;
+          for (; i <= o;) (b(null, t[i], n, e), i++);
         }
-      } else if (r > a) for (; r <= i;) (N(e[r]), r++);
+      } else if (i > o) for (; i <= a;) (x(e[i]), i++);
       else {
-        let s = r,
-          c = r,
+        let s = i,
+          c = i,
           l = /* @__PURE__ */ new Map();
-        for (let e = c; e <= a; e++) {
+        for (let e = c; e <= o; e++) {
           let n = t[e];
           l.set(n.key, e);
         }
-        for (let r = s; r <= i; r++) {
+        for (let r = s; r <= a; r++) {
           let i = e[r],
             a = l.get(i.key);
-          a == null ? N(i) : j(i, t[a], n);
+          a == null ? x(i) : b(i, t[a], n);
         }
-        let u = a - c + 1;
+        let u = o - c + 1;
         for (let e = u - 1; e >= 0; e--) {
-          let r = c + e,
-            i = r + 1 < t.length ? t[r + 1].el : null,
-            a = t[r];
-          a.el ? o(a.el, n, i) : j(null, a, n, i);
+          let i = c + e,
+            a = i + 1 < t.length ? t[i + 1].el : null,
+            o = t[i];
+          o.el ? r(o.el, n, a) : b(null, o, n, a);
         }
       }
     },
-    _ = (e, t) => {
+    f = (e, t) => {
       console.log('[mountChildren]: ', e, t, 'mount');
-      for (let n of e) j(null, n, t);
+      for (let n of e) b(null, n, t);
     },
-    v = (e, t, n) => {
-      let { type: r, props: a, children: s, shapeFlag: l } = e,
-        u = (e.el = i(r));
-      if (a) for (let e in a) p(u, e, null, a[e]);
-      (l & K.TEXT_CHILDREN ? c(u, s) : l & K.ARRAY_CHILDREN && _(s, u), o(u, t, n));
+    p = (e, n, i) => {
+      let { type: o, props: s, children: c, shapeFlag: u } = e,
+        d = (e.el = t(o));
+      if (s) for (let e in s) l(d, e, null, s[e]);
+      (u & K.TEXT_CHILDREN ? a(d, c) : u & K.ARRAY_CHILDREN && f(c, d), r(d, n, i));
     },
-    y = (e) => {
+    m = (e) => {
       e.forEach((e) => {
-        N(e);
+        x(e);
       });
     },
-    b = (e, t, n, r) => {
-      (console.log('[processElement]:', e, t, n, 'patch'), e === null ? v(t, n, r) : x(e, t));
+    h = (e, t, n, r) => {
+      (console.log('[processElement]:', e, t, n, 'patch'), e === null ? p(t, n, r) : g(e, t));
     },
-    x = (e, t) => {
+    g = (e, t) => {
       let n = (t.el = e.el);
-      n && (pe(n, e.props || {}, t.props || {}), S(e, t, n));
+      n && (pe(n, e.props || {}, t.props || {}), _(e, t, n));
     },
-    S = (e, t, n) => {
+    _ = (e, t, n) => {
       console.log('[patchChildren]: ', e, t, 'patchChildren');
       let r = e.children,
         i = t.children,
-        a = e.shapeFlag,
-        o = t.shapeFlag;
-      o & K.TEXT_CHILDREN
-        ? (a & K.ARRAY_CHILDREN && y(r), r !== i && c(n, i))
-        : o & K.ARRAY_CHILDREN
-          ? a & K.TEXT_CHILDREN
-            ? (c(n, ''), _(i, n))
-            : a & K.ARRAY_CHILDREN && h(r, i, n)
-          : a & K.TEXT_CHILDREN
-            ? c(n, '')
-            : a & K.ARRAY_CHILDREN && y(r);
+        o = e.shapeFlag,
+        s = t.shapeFlag;
+      s & K.TEXT_CHILDREN
+        ? (o & K.ARRAY_CHILDREN && m(r), r !== i && a(n, i))
+        : s & K.ARRAY_CHILDREN
+          ? o & K.TEXT_CHILDREN
+            ? (a(n, ''), f(i, n))
+            : o & K.ARRAY_CHILDREN && d(r, i, n)
+          : o & K.TEXT_CHILDREN
+            ? a(n, '')
+            : o & K.ARRAY_CHILDREN && m(r);
     },
-    C = (e, t, n) => {
+    v = (e, t, i) => {
       if (e === null) {
-        let e = (t.el = a(t.children));
-        o(e, n);
+        let e = (t.el = n(t.children));
+        r(e, i);
       } else {
         let n = (t.el = e.el);
-        t.children !== e.children && n && he(n) && l(n, t.children);
+        t.children !== e.children && n && he(n) && o(n, t.children);
       }
     },
-    w = (e) => {
-      let t = {
-        vnode: e,
-        data: {},
-        attrs: {},
-        emit: () => {},
-        exposed: {},
-        proxy: null,
-        update: null,
-        props: e.props || {},
-        type: e.type,
-        setupState: {},
-        render: null,
-        slots: {},
-        subTree: null,
-        isMounted: !1,
-      };
-      return ((t.emit = we.bind(null, t)), t);
+    y = (e, t, n) => {
+      e === null ? t.children && f(t.children, n) : _(e, t, n);
     },
-    T = (t) => {
-      (xe(t, t.vnode.props), Se(t, t.vnode.children));
-      let i = t.type;
-      if (((t.render = i.render ?? null), i.data && (t.data = g(i.data())), i.setup)) {
-        let r = {
-            attrs: t.attrs,
-            slots: t.slots,
-            emit: t.emit,
-            expose(e = {}) {
-              t.exposed = e;
-            },
-          },
-          a = i.setup(t.props, r);
-        n(a) ? (t.render = a) : e(a) && (t.setupState = M(a));
-      }
-      t.proxy = new Proxy(t, {
-        get(e, t) {
-          let { setupState: n, data: i, props: a, attrs: o, slots: s, emit: c } = e;
-          if (typeof t != 'symbol') {
-            if (r(n, t)) return n[t];
-            if (r(i, t)) return i[t];
-            if (r(a, t)) return a[t];
-            if (t === '$emit') return c;
-            if (t === '$attrs') return o;
-            if (t === '$slots') return s;
-          }
-        },
-        set(e, t, n) {
-          let { setupState: i, data: a, props: o, attrs: s } = e;
-          return typeof t == 'symbol'
-            ? !0
-            : r(i, t) && i
-              ? ((i[t] = n), !0)
-              : r(a, t) && a
-                ? ((a[t] = n), !0)
-                : (r(o, t) && o && console.warn('props is readonly'), !0);
-        },
-      });
-    },
-    E = (e, t, n = null) => {
-      console.log('[mountComponent]: ', e);
-      let r = w(e);
-      ((e.component = r), T(r), D(r, e, t, n));
-    },
-    D = (e, t, n, r = null) => {
-      let i = () => {
-          if (e.isMounted) {
-            let t = e.subTree,
-              i = e.render?.call(e.proxy, e.proxy);
-            ((e.subTree = i), j(t, i, n, r));
-          } else {
-            let i = e.render?.call(e.proxy, e.proxy);
-            ((e.subTree = i),
-              j(null, i, n, r),
-              (t.el = i.el),
-              (e.isMounted = !0),
-              e.type.mounted?.call(e.proxy, e.proxy));
-          }
-        },
-        a,
-        o = new u(i, () => {
-          ve(a);
-        });
-      ((a = e.update = () => o.run()), a());
-    },
-    O = (e, t) => {
-      let n = (t.component = e.component);
-      if (!n) throw Error('Component instance is missing');
-      let r = e.props ?? {},
-        i = t.props ?? {};
-      ((n.vnode = t), (t.el = e.el), be(n, r, i), n.update?.());
-    },
-    k = (e, t, n, r = null) => {
-      (console.log('[processComponent]'), e === null ? E(t, n, r) : O(e, t));
-    },
-    A = (e, t, n) => {
-      e === null ? t.children && _(t.children, n) : S(e, t, n);
-    },
-    j = (e, t, n, r = null) => {
+    b = (e, t, i, a = null) => {
       if (e === t) return;
-      e !== null && (G(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), N(e), (e = null)));
-      let { type: i, shapeFlag: s } = t;
-      switch (i) {
+      e !== null && (G(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), x(e), (e = null)));
+      let { type: o, shapeFlag: s } = t;
+      switch (o) {
         case Z:
-          C(e, t, n);
+          v(e, t, i);
           break;
         case Q:
-          A(e, t, n);
+          y(e, t, i);
           break;
         default:
           s & K.ELEMENT
-            ? b(e, t, n, r)
+            ? h(e, t, i, a)
             : s & K.COMPONENT
-              ? (console.log('[patch]: component'), k(e, t, n, r))
+              ? (console.log('[patch]: component'), Ae(e, t, i, a, { patch: b }))
               : s & K.TELEPORT &&
-                i.process(e, t, n, r, {
-                  mountChildren: _,
-                  patchChildren: S,
-                  unmountChildren: y,
-                  createText: a,
-                  insert: o,
-                  querySelector: m,
+                o.process(e, t, i, a, {
+                  mountChildren: f,
+                  patchChildren: _,
+                  unmountChildren: m,
+                  createText: n,
+                  insert: r,
+                  querySelector: u,
                 });
           break;
       }
     },
-    N = (e) => {
+    x = (e) => {
       if (e.type === Q) {
-        e.children && y(e.children);
+        e.children && m(e.children);
         return;
       }
-      (e.shapeFlag & K.TELEPORT && Array.isArray(e.children) && y(e.children),
-        (e.el &&= (s(e.el), null)));
+      (e.shapeFlag & K.TELEPORT && Array.isArray(e.children) && m(e.children),
+        (e.el &&= (i(e.el), null)));
     };
   return {
     render: (e, t) => {
-      (e === null && t._vnode && N(t._vnode), j(t._vnode || null, e, t), (t._vnode = e));
+      (e === null && t._vnode && x(t._vnode), b(t._vnode || null, e, t), (t._vnode = e));
     },
   };
 }
-var { render: ke } = $(W);
+var { render: Fe } = $(W);
 //#endregion
 export {
   Q as Fragment,
-  Y as Teleport,
+  je as Teleport,
   Z as Text,
-  ee as computed,
+  se as computed,
   $ as createRenderer,
   s as effect,
-  Ee as h,
-  O as isRef,
-  M as proxyRefs,
+  Ne as h,
+  C as isRef,
+  T as proxyRefs,
   g as reactive,
-  C as ref,
-  ke as render,
+  ee as ref,
+  Fe as render,
   W as renderOptions,
-  A as toRef,
-  j as toRefs,
-  re as watch,
+  ae as toRef,
+  oe as toRefs,
+  ue as watch,
 };
