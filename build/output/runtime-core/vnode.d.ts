@@ -1,3 +1,4 @@
+import { ComponentInstance } from './component';
 import { Emit, Expose } from './emit';
 import { Slots } from './slot';
 export type SetupProps = Readonly<Record<string, any>>;
@@ -16,32 +17,6 @@ export interface VNode {
   key: string | number | null;
   shapeFlag: number;
   component?: ComponentInstance;
-}
-export interface Component {
-  setup?: (setupProps: SetupProps, setupContext: SetupContext) => any;
-  render?: () => VNode;
-  expose: Expose;
-  data?: () => Record<string, any>;
-  props?: string[] | Record<string, any>;
-  mounted?: (proxy: any) => void;
-}
-export interface ComponentInstance {
-  vnode: VNode;
-  data: any;
-  slots: Slots;
-  props: Record<string, any>;
-  attrs: Record<string, any>;
-  emit: Emit;
-  exposed: Record<string, unknown>;
-  proxy: any;
-  update: Function | null;
-  type: Component;
-  setupState: Record<string, any>;
-  render: Function | null;
-  subTree: VNode | null;
-  isMounted: boolean;
-  parent: ComponentInstance | null;
-  provides: Record<PropertyKey, unknown>;
 }
 export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
@@ -63,3 +38,4 @@ export type Container = Element & {
 export declare function isVNode(vnode: any): vnode is VNode;
 export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
 export declare function isText(node: Node): node is Text;
+export type { ComponentInstance };

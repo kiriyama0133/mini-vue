@@ -116,13 +116,13 @@ function S(t) {
 }
 //#endregion
 //#region lib/ref/index.ts
+function C(e) {
+  return ee(e);
+}
 function ee(e) {
-  return te(e);
+  return new te(e);
 }
-function te(e) {
-  return new ne(e);
-}
-var ne = class {
+var te = class {
   rawValue;
   __v_isRef = !0;
   _value;
@@ -131,22 +131,22 @@ var ne = class {
     ((this.rawValue = e), (this._value = S(e)));
   }
   get value() {
-    return (re(this), this._value);
+    return (ne(this), this._value);
   }
   set value(e) {
-    ((this.rawValue = e), (this._value = S(e)), ie(this));
+    ((this.rawValue = e), (this._value = S(e)), re(this));
   }
 };
-function re(e) {
+function ne(e) {
   c && ((e.dep ||= /* @__PURE__ */ new Set()), v(e.dep));
 }
-function ie(e) {
+function re(e) {
   e.dep && x(e.dep);
 }
-function C(e) {
+function w(e) {
   return !!(e && e.__v_isRef);
 }
-var w = class {
+var T = class {
   _object;
   _key;
   constructor(e, t) {
@@ -160,63 +160,63 @@ var w = class {
     this._object[this._key] = e;
   }
 };
-function ae(e, t) {
-  return new w(e, t);
+function ie(e, t) {
+  return new T(e, t);
 }
-function oe(e) {
+function ae(e) {
   let t = {};
   for (let n in e) {
     let r = n;
-    t[r] = new w(e, r);
+    t[r] = new T(e, r);
   }
   return t;
 }
-function T(e) {
+function E(e) {
   return new Proxy(e, {
     get(e, t, n) {
       let r = Reflect.get(e, t, n);
-      return C(r) ? r.value : r;
+      return w(r) ? r.value : r;
     },
     set(e, t, n, r) {
       let i = Reflect.get(e, t, r);
-      return C(i) && !C(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
+      return w(i) && !w(n) ? ((i.value = n), !0) : Reflect.set(e, t, n, r);
     },
   });
 }
 //#endregion
 //#region lib/effect/computed.ts
-var E = /* @__PURE__ */ (function (e) {
+var D = /* @__PURE__ */ (function (e) {
   return ((e[(e.Dirty = 4)] = 'Dirty'), (e[(e.NoDirty = 0)] = 'NoDirty'), e);
 })({});
-function se(e) {
-  return typeof e == 'function' ? new D(e, void 0) : new D(e.get, e.set);
+function oe(e) {
+  return typeof e == 'function' ? new O(e, void 0) : new O(e.get, e.set);
 }
-var D = class {
+var O = class {
   getter;
   setter;
   __v_isRef = !0;
   dep;
-  dirtyLevel = E.Dirty;
+  dirtyLevel = D.Dirty;
   _value;
   effect;
   constructor(e, t) {
     ((this.getter = e),
       (this.setter = t),
       (this.effect = new u(this.getter, () => {
-        ((this.dirtyLevel = E.Dirty), le(this));
+        ((this.dirtyLevel = D.Dirty), ce(this));
       })));
   }
   set dirty(e) {
-    this.dirtyLevel = e ? E.Dirty : E.NoDirty;
+    this.dirtyLevel = e ? D.Dirty : D.NoDirty;
   }
   get dirty() {
-    return this.dirtyLevel === E.Dirty;
+    return this.dirtyLevel === D.Dirty;
   }
   get value() {
     return (
-      ce(this),
-      this.dirtyLevel === E.Dirty &&
-        ((this._value = this.effect.run()), (this.dirtyLevel = E.NoDirty)),
+      se(this),
+      this.dirtyLevel === D.Dirty &&
+        ((this._value = this.effect.run()), (this.dirtyLevel = D.NoDirty)),
       this._value
     );
   }
@@ -224,21 +224,21 @@ var D = class {
     this.setter ? this.setter?.call(this, e) : console.warn('computed ref is readonly');
   }
 };
-function ce(e) {
+function se(e) {
   c && ((e.dep ||= /* @__PURE__ */ new Set()), v(e.dep));
 }
-function le(e) {
+function ce(e) {
   e.dep && x(e.dep);
 }
 //#endregion
 //#region lib/effect/watch.ts
-function ue(e, t, n) {
-  de(e, t, n);
+function le(e, t, n) {
+  ue(e, t, n);
 }
-function de(e, t, n) {
-  let r = (e) => O(e, n?.deep ? 1 : void 0),
+function ue(e, t, n) {
+  let r = (e) => k(e, n?.deep ? 1 : void 0),
     i;
-  i = C(e) ? () => e.value : h(e) ? () => r(e) : () => e;
+  i = w(e) ? () => e.value : h(e) ? () => r(e) : () => e;
   let a,
     o = () => {
       let e = s.run();
@@ -248,56 +248,56 @@ function de(e, t, n) {
   let s = new u(i, o);
   a = s.run();
 }
-function O(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
+function k(e, t, n = 0, r = /* @__PURE__ */ new Set()) {
   if (typeof e != 'object' || !e || (t !== void 0 && n >= t) || r.has(e)) return e;
   r.add(e);
-  for (let i in e) O(e[i], t, n + 1, r);
+  for (let i in e) k(e[i], t, n + 1, r);
   return e;
 }
 //#endregion
 //#region lib/runtime-dom/nodeOps.ts
-var k = {
-  createElement: A,
-  createText: j,
-  insert: M,
-  remove: N,
-  setElementText: P,
-  setText: F,
-  parentNode: I,
-  nextSibling: L,
-  querySelector: R,
+var de = {
+  createElement: fe,
+  createText: pe,
+  insert: me,
+  remove: he,
+  setElementText: ge,
+  setText: A,
+  parentNode: j,
+  nextSibling: M,
+  querySelector: N,
 };
-function A(e) {
+function fe(e) {
   return document.createElement(e);
 }
-function j(e) {
+function pe(e) {
   return document.createTextNode(e);
 }
-function M(e, t, n) {
+function me(e, t, n) {
   t.insertBefore(e, n || null);
 }
-function N(e) {
+function he(e) {
   let t = e.parentNode;
   t && t.removeChild(e);
 }
-function P(e, t) {
+function ge(e, t) {
   e.textContent = t;
 }
-function F(e, t) {
+function A(e, t) {
   e.nodeValue = t;
 }
-function I(e) {
+function j(e) {
   return e.parentNode;
 }
-function L(e) {
+function M(e) {
   return e.nextSibling;
 }
-function R(e) {
+function N(e) {
   return document.querySelector(e);
 }
 //#endregion
 //#region lib/runtime-dom/event.ts
-function z(e, t, n) {
+function P(e, t, n) {
   let r = (e._vei ||= {}),
     i = r[t];
   if (i)
@@ -308,11 +308,11 @@ function z(e, t, n) {
     }
   if (n) {
     let i = t.slice(2).toLowerCase(),
-      a = (r[t] = B(n));
+      a = (r[t] = F(n));
     e.addEventListener(i, a);
   }
 }
-function B(e) {
+function F(e) {
   let t = (e) => {
     t.value(e);
   };
@@ -320,68 +320,68 @@ function B(e) {
 }
 //#endregion
 //#region lib/runtime-dom/style.ts
-function V(e, t, n) {
+function I(e, t, n) {
   let r = e.style;
   if (n) for (let e in n) r[e] = n[e];
   if (t) for (let e in t) r[e] = '';
 }
 //#endregion
 //#region lib/runtime-dom/class.ts
-function H(e, t) {
+function L(e, t) {
   e.className = t || '';
 }
 //#endregion
 //#region lib/runtime-dom/attr.ts
-function fe(e, t, n) {
+function _e(e, t, n) {
   n == null ? e.removeAttribute(t) : e.setAttribute(t, n);
 }
 //#endregion
 //#region lib/runtime-dom/patchProps.ts
-function pe(e, t, n) {
+function ve(e, t, n) {
   for (let r in n) {
     let i = t[r],
       a = n[r];
-    i !== a && U(e, r, i, a);
+    i !== a && R(e, r, i, a);
   }
   for (let r in t)
     if (!(r in n)) {
       let n = t[r];
-      U(e, r, n, null);
+      R(e, r, n, null);
     }
 }
-function U(e, t, n, r) {
+function R(e, t, n, r) {
   if (/^on[^a-z]/.test(t)) {
-    z(e, t, r);
+    P(e, t, r);
     return;
   }
   switch (t) {
     case 'class':
-      H(e, r);
+      L(e, r);
       break;
     case 'style':
-      V(e, n, r);
+      I(e, n, r);
       break;
     default:
-      fe(e, t, r);
+      _e(e, t, r);
   }
 }
 //#endregion
 //#region lib/runtime-dom/index.ts
-var W = Object.assign({ patchProp: U }, k);
+var z = Object.assign({ patchProp: R }, de);
 //#endregion
 //#region lib/runtime-core/vnode.ts
-function me(e) {
+function ye(e) {
   return e.__v_isVnode;
 }
-function G(e, t) {
+function B(e, t) {
   return e.type === t.type && e.key === t.key;
 }
-function he(e) {
+function be(e) {
   return e.nodeType === Node.TEXT_NODE;
 }
 //#endregion
 //#region lib/shared/shapeFlags.ts
-var K = /* @__PURE__ */ (function (e) {
+var V = /* @__PURE__ */ (function (e) {
     return (
       (e[(e.ELEMENT = 1)] = 'ELEMENT'),
       (e[(e.FUNCTIONAL_COMPONENT = 2)] = 'FUNCTIONAL_COMPONENT'),
@@ -397,7 +397,7 @@ var K = /* @__PURE__ */ (function (e) {
       e
     );
   })({}),
-  ge = (e, t) => {
+  xe = (e, t) => {
     let n = Object.keys(t);
     if (Object.keys(t).length !== Object.keys(e).length) return !0;
     for (let r = 0; r < n.length; r++) {
@@ -406,13 +406,13 @@ var K = /* @__PURE__ */ (function (e) {
     }
     return !1;
   },
-  _e = (e, t, n) => {
-    if (ge(t, n)) {
+  Se = (e, t, n) => {
+    if (xe(t, n)) {
       for (let t in e.props) e.props[t] = n[t];
       for (let t in e.props) t in n || delete e.props[t];
     }
   },
-  ve = (e, t) => {
+  Ce = (e, t) => {
     let n = {},
       r = {},
       i = e.type.props || [];
@@ -421,74 +421,104 @@ var K = /* @__PURE__ */ (function (e) {
   };
 //#endregion
 //#region lib/runtime-core/emit.ts
-function ye(e, t, ...n) {
+function we(e, t, ...n) {
   let { props: r } = e,
     a = r[o(i(t))];
   typeof a == 'function' && a(...n);
 }
 //#endregion
 //#region lib/runtime-core/schedular.ts
-var q = [],
-  J = !1,
-  be = Promise.resolve();
-function xe() {
-  J = !1;
-  let e = q.slice();
-  q.length = 0;
+var H = [],
+  U = !1,
+  Te = Promise.resolve();
+function Ee() {
+  U = !1;
+  let e = H.slice();
+  H.length = 0;
   for (let t of e) t();
 }
-function Se(e) {
-  (q.includes(e) || q.push(e), J || ((J = !0), be.then(xe)));
+function De(e) {
+  (H.includes(e) || H.push(e), U || ((U = !0), Te.then(Ee)));
 }
 //#endregion
 //#region lib/runtime-core/slot.ts
-function Ce(e, t) {
-  e.vnode.shapeFlag & K.SLOTS_CHILDREN && we(t) ? (e.slots = t) : (e.slots = {});
+function Oe(e, t) {
+  e.vnode.shapeFlag & V.SLOTS_CHILDREN && ke(t) ? (e.slots = t) : (e.slots = {});
 }
-function we(e) {
-  return typeof e != 'object' || !e || Array.isArray(e) || me(e)
+function ke(e) {
+  return typeof e != 'object' || !e || Array.isArray(e) || ye(e)
     ? !1
     : Object.values(e).every((e) => typeof e == 'function' || e === void 0);
 }
-var Te = (e, t) => {
-    let n = {
-      vnode: e,
-      parent: t,
-      provides: t ? t.provides : Object.create(null),
-      data: {},
-      attrs: {},
-      emit: () => {},
-      exposed: {},
-      proxy: null,
-      update: null,
-      props: e.props || {},
-      type: e.type,
-      setupState: {},
-      render: null,
-      slots: {},
-      subTree: null,
-      isMounted: !1,
-    };
-    return ((n.emit = ye.bind(null, n)), n);
+//#endregion
+//#region lib/runtime-core/component.ts
+var W = null;
+function Ae() {
+  return W;
+}
+function G(e) {
+  W = e;
+}
+var je = (e, t) => {
+  let n = {
+    vnode: e,
+    bm: [],
+    u: [],
+    um: [],
+    bum: [],
+    m: [],
+    bu: [],
+    isUnmounted: !1,
+    effect: null,
+    parent: t,
+    provides: t ? t.provides : Object.create(null),
+    data: {},
+    attrs: {},
+    emit: () => {},
+    exposed: {},
+    proxy: null,
+    update: null,
+    props: e.props || {},
+    type: e.type,
+    setupState: {},
+    render: null,
+    slots: {},
+    subTree: null,
+    isMounted: !1,
+  };
+  return ((n.emit = we.bind(null, n)), n);
+};
+function K(e) {
+  e && e.forEach((e) => e());
+}
+var Me = (e, t) => {
+    e.isUnmounted ||
+      (K(e.bum),
+      (e.isUnmounted = !0),
+      e.effect?.stop(),
+      e.subTree && t.unmount(e.subTree),
+      K(e.um));
   },
-  Ee = (t) => {
-    (ve(t, t.vnode.props), Ce(t, t.vnode.children));
+  Ne = (t) => {
+    (Ce(t, t.vnode.props), Oe(t, t.vnode.children));
     let i = t.type;
     if (((t.render = i.render ?? null), i.data && (t.data = g(i.data())), i.setup)) {
       let r = {
-          attrs: t.attrs,
-          slots: t.slots,
-          emit: t.emit,
-          expose(e = {}) {
-            t.exposed = e;
-          },
+        attrs: t.attrs,
+        slots: t.slots,
+        emit: t.emit,
+        expose(e = {}) {
+          t.exposed = e;
         },
-        a;
+      };
+      G(t);
+      let a;
       try {
         a = i.setup(t.props, r);
       } finally {
+        G(null);
       }
-      n(a) ? (t.render = a) : e(a) && (t.setupState = T(a));
+      n(a) ? (t.render = a) : e(a) && (t.setupState = E(a));
     }
     t.proxy = new Proxy(t, {
       get(e, t) {
@@ -514,7 +544,7 @@ var Te = (e, t) => {
       },
     });
   },
-  De = (e, t, n, r, i) => {
+  Pe = (e, t, n, r, i) => {
     let a = () => {
         if (e.isMounted) {
           let t = e.subTree,
@@ -531,26 +561,31 @@ var Te = (e, t) => {
       },
       o,
       s = new u(a, () => {
-        Se(o);
+        De(o);
       });
-    ((o = e.update = () => s.run()), o());
+    ((e.effect = s),
+      (o = e.update =
+        () => {
+          e.isUnmounted || s.run();
+        }),
+      o());
   },
-  Oe = (e, t, n, r, i) => {
+  Fe = (e, t, n, r, i) => {
     console.log('[mountComponent]: ', e);
-    let a = Te(e, r);
-    ((e.component = a), Ee(a), De(a, e, t, n, i));
+    let a = je(e, r);
+    ((e.component = a), Ne(a), Pe(a, e, t, n, i));
   },
-  ke = (e, t) => {
+  Ie = (e, t) => {
     let n = (t.component = e.component);
     if (!n) throw Error('Component instance is missing');
     let r = e.props ?? {},
       i = t.props ?? {};
-    ((n.vnode = t), (t.el = e.el), _e(n, r, i), n.update?.());
+    ((n.vnode = t), (t.el = e.el), Se(n, r, i), n.update?.());
   },
-  Ae = (e, t, n, r, i, a) => {
-    (console.log('[processComponent]'), e === null ? Oe(t, n, r, i, a) : ke(e, t));
+  Le = (e, t, n, r, i, a) => {
+    (console.log('[processComponent]'), e === null ? Fe(t, n, r, i, a) : Ie(e, t));
   },
-  je = {
+  Re = {
     __is_Teleport: !0,
     process(e, t, n, r, i) {
       let {
@@ -561,7 +596,7 @@ var Te = (e, t) => {
           insert: l,
           querySelector: u,
         } = i,
-        d = Y(t.props?.to, u);
+        d = q(t.props?.to, u);
       if (!d) {
         console.warn(`[Teleport]: target "${t.props?.to}" not found`);
         return;
@@ -571,30 +606,30 @@ var Te = (e, t) => {
         return;
       }
       ((t.el = e.el),
-        Y(e.props?.to, u) === d
+        q(e.props?.to, u) === d
           ? o(e, t, d)
           : (Array.isArray(e.children) && s(e.children),
             Array.isArray(t.children) && a(t.children, d)));
     },
   };
-function Y(e, t) {
+function q(e, t) {
   return typeof e == 'string' ? t(e) : e && typeof e == 'object' ? e : null;
 }
-var Me = (e) => !!(e && typeof e == 'object' && e.__is_Teleport);
+var ze = (e) => !!(e && typeof e == 'object' && e.__is_Teleport);
 //#endregion
 //#region lib/runtime-core/h.ts
-function Ne({ type: e, props: t, children: n }) {
-  return X(e, t, n);
+function J({ type: e, props: t, children: n }) {
+  return Be(e, t, n);
 }
-function X(r, i, a) {
+function Be(r, i, a) {
   let o = t(r)
-      ? K.ELEMENT
-      : Me(r)
-        ? K.TELEPORT
+      ? V.ELEMENT
+      : ze(r)
+        ? V.TELEPORT
         : e(r)
-          ? K.STATEFUL_COMPONENT
+          ? V.STATEFUL_COMPONENT
           : n(r)
-            ? K.FUNCTIONAL_COMPONENT
+            ? V.FUNCTIONAL_COMPONENT
             : 0,
     s = {
       __v_isVnode: !0,
@@ -605,20 +640,45 @@ function X(r, i, a) {
       el: null,
       shapeFlag: o,
     };
-  return (Pe(s), s);
+  return (Ve(s), s);
 }
-function Pe(t) {
+function Ve(t) {
   let { children: n } = t;
   n != null &&
     (Array.isArray(n)
-      ? (t.shapeFlag |= K.ARRAY_CHILDREN)
+      ? (t.shapeFlag |= V.ARRAY_CHILDREN)
       : typeof n == 'string' || typeof n == 'number'
-        ? ((t.children = String(n)), (t.shapeFlag |= K.TEXT_CHILDREN))
-        : e(n) && (t.shapeFlag |= K.SLOTS_CHILDREN));
+        ? ((t.children = String(n)), (t.shapeFlag |= V.TEXT_CHILDREN))
+        : e(n) && (t.shapeFlag |= V.SLOTS_CHILDREN));
 }
 //#endregion
-//#region lib/runtime-core/index.ts
-var Z = Symbol('Text'),
+//#region lib/runtime-core/apiLifecyle.ts
+var Y = /* @__PURE__ */ (function (e) {
+  return (
+    (e.BEFORE_MOUNT = 'bm'),
+    (e.MOUNTED = 'm'),
+    (e.BEFORE_UPDATE = 'bu'),
+    (e.UPDATED = 'u'),
+    (e.BEFORE_UNMOUNT = 'bum'),
+    (e.UNMOUNTED = 'um'),
+    e
+  );
+})({});
+function He(e, t, n = Ae()) {
+  if (!n) {
+    console.warn('Lifecycle hooks can only be registered during setup()');
+    return;
+  }
+  n[e].push(t);
+}
+function X(e) {
+  return (t) => {
+    He(e, t);
+  };
+}
+var Ue = X(Y.BEFORE_UNMOUNT),
+  We = X(Y.UNMOUNTED),
+  Z = Symbol('Text'),
   Q = Symbol('Fragnment');
 function $(e) {
   let {
@@ -641,14 +701,14 @@ function $(e) {
       for (; a <= o && a <= s;) {
         let r = e[a],
           o = t[a];
-        if (G(r, o)) b(r, o, n, null, i);
+        if (B(r, o)) b(r, o, n, null, i);
         else break;
         a++;
       }
       for (console.log('[diff]: ', a, o, s); a <= o && a <= s;) {
         let r = e[o],
           a = t[s];
-        if (G(r, a)) b(r, a, n, null, i);
+        if (B(r, a)) b(r, a, n, null, i);
         else break;
         (o--, s--);
       }
@@ -688,7 +748,7 @@ function $(e) {
       let { type: s, props: c, children: u, shapeFlag: d } = e,
         p = (e.el = t(s));
       if (c) for (let e in c) l(p, e, null, c[e]);
-      (d & K.TEXT_CHILDREN ? a(p, u) : d & K.ARRAY_CHILDREN && f(u, p, o), r(p, n, i));
+      (d & V.TEXT_CHILDREN ? a(p, u) : d & V.ARRAY_CHILDREN && f(u, p, o), r(p, n, i));
     },
     m = (e) => {
       e.forEach((e) => {
@@ -700,7 +760,7 @@ function $(e) {
     },
     g = (e, t, n) => {
       let r = (t.el = e.el);
-      r && (pe(r, e.props || {}, t.props || {}), _(e, t, r, n));
+      r && (ve(r, e.props || {}, t.props || {}), _(e, t, r, n));
     },
     _ = (e, t, n, r) => {
       console.log('[patchChildren]: ', e, t, 'patchChildren');
@@ -708,15 +768,15 @@ function $(e) {
         o = t.children,
         s = e.shapeFlag,
         c = t.shapeFlag;
-      c & K.TEXT_CHILDREN
-        ? (s & K.ARRAY_CHILDREN && m(i), i !== o && a(n, o))
-        : c & K.ARRAY_CHILDREN
-          ? s & K.TEXT_CHILDREN
+      c & V.TEXT_CHILDREN
+        ? (s & V.ARRAY_CHILDREN && m(i), i !== o && a(n, o))
+        : c & V.ARRAY_CHILDREN
+          ? s & V.TEXT_CHILDREN
             ? (a(n, ''), f(o, n, r))
-            : s & K.ARRAY_CHILDREN && d(i, o, n, r)
-          : s & K.TEXT_CHILDREN
+            : s & V.ARRAY_CHILDREN && d(i, o, n, r)
+          : s & V.TEXT_CHILDREN
             ? a(n, '')
-            : s & K.ARRAY_CHILDREN && m(i);
+            : s & V.ARRAY_CHILDREN && m(i);
     },
     v = (e, t, i) => {
       if (e === null) {
@@ -724,7 +784,7 @@ function $(e) {
         r(e, i);
       } else {
         let n = (t.el = e.el);
-        t.children !== e.children && n && he(n) && o(n, t.children);
+        t.children !== e.children && n && be(n) && o(n, t.children);
       }
     },
     y = (e, t, n, r) => {
@@ -732,7 +792,7 @@ function $(e) {
     },
     b = (e, t, i, a = null, o = null) => {
       if (e === t) return;
-      e !== null && (G(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), x(e), (e = null)));
+      e !== null && (B(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), x(e), (e = null)));
       let { type: s, shapeFlag: c } = t;
       switch (s) {
         case Z:
@@ -742,11 +802,11 @@ function $(e) {
           y(e, t, i, o);
           break;
         default:
-          c & K.ELEMENT
+          c & V.ELEMENT
             ? h(e, t, i, a, o)
-            : c & K.COMPONENT
-              ? (console.log('[patch]: component'), Ae(e, t, i, a, o, { patch: b }))
-              : c & K.TELEPORT &&
+            : c & V.COMPONENT
+              ? (console.log('[patch]: component'), Le(e, t, i, a, o, C))
+              : c & V.TELEPORT &&
                 s.process(e, t, i, a, {
                   mountChildren: f,
                   patchChildren: _,
@@ -759,36 +819,53 @@ function $(e) {
       }
     },
     x = (e) => {
+      if (e.shapeFlag & V.COMPONENT) {
+        e.component && Me(e.component, C);
+        return;
+      }
       if (e.type === Q) {
         e.children && m(e.children);
         return;
       }
-      (e.shapeFlag & K.TELEPORT && Array.isArray(e.children) && m(e.children),
+      (e.shapeFlag & V.TELEPORT && Array.isArray(e.children) && m(e.children),
+        e.shapeFlag & V.ELEMENT &&
+          e.shapeFlag & V.ARRAY_CHILDREN &&
+          Array.isArray(e.children) &&
+          m(e.children),
         (e.el &&= (i(e.el), null)));
-    };
-  return {
-    render: (e, t) => {
-      (e === null && t._vnode && x(t._vnode), b(t._vnode || null, e, t), (t._vnode = e));
     },
-  };
+    S = (e, t) => {
+      if (e === null) {
+        (t._vnode && x(t._vnode), (t._vnode = null));
+        return;
+      }
+      (b(t._vnode || null, e, t), (t._vnode = e));
+    },
+    C = {
+      patch: b,
+      unmount: x,
+    };
+  return { render: S };
 }
-var { render: Fe } = $(W);
+var { render: Ge } = $(z);
 //#endregion
 export {
   Q as Fragment,
-  je as Teleport,
+  Re as Teleport,
   Z as Text,
-  se as computed,
+  oe as computed,
   $ as createRenderer,
   s as effect,
-  Ne as h,
-  C as isRef,
-  T as proxyRefs,
+  J as h,
+  w as isRef,
+  Ue as onBeforeUnmount,
+  We as onUnmounted,
+  E as proxyRefs,
   g as reactive,
-  ee as ref,
-  Fe as render,
-  W as renderOptions,
-  ae as toRef,
-  oe as toRefs,
-  ue as watch,
+  C as ref,
+  Ge as render,
+  z as renderOptions,
+  ie as toRef,
+  ae as toRefs,
+  le as watch,
 };

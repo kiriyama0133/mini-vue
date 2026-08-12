@@ -1,7 +1,8 @@
 //lib/runtime-core
 
 import { ShapeFlags } from '../shared/shapeFlags';
-import { ComponentInstance, isVNode, VNode, VNodeChildren } from './vnode';
+import type { ComponentInstance } from './component';
+import { isVNode, VNode, VNodeChildren } from './vnode';
 
 export type SlotProps = Record<string, any>;
 export type SlotValue = VNode | VNode[];

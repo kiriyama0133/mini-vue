@@ -1,4 +1,5 @@
-import { ComponentInstance, VNode, VNodeChildren } from './vnode';
+import { ComponentInstance } from './component';
+import { VNode, VNodeChildren } from './vnode';
 export type SlotProps = Record<string, any>;
 export type SlotValue = VNode | VNode[];
 export type Slot = (props?: SlotProps) => SlotValue;

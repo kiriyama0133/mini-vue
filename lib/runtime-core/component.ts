@@ -5,11 +5,46 @@ import { reactive } from '../reactivity';
 import { proxyRefs } from '../ref';
 import { hasOwn, isFunction, isObject } from '../utils/object';
 import { initProps, updateProps } from '../utils/props';
-import { emit } from './emit';
+import type { LifecycleHooksArray } from './apiLifecyle';
+import { Emit, emit, Expose } from './emit';
 import { queueJob } from './schedular';
-import { initSlots } from './slot';
-import type { ComponentInstance, Container, VNode } from './vnode';
+import { initSlots, Slots } from './slot';
+import type { Container, SetupContext, SetupProps, VNode } from './vnode';
 
+export interface Component {
+  setup?: (setupProps: SetupProps, setupContext: SetupContext) => any;
+  render?: () => VNode;
+  expose: Expose;
+  data?: () => Record<string, any>;
+  props?: string[] | Record<string, any>;
+  mounted?: (proxy: any) => void;
+}
+export interface ComponentInstance {
+  vnode: VNode;
+  data: any;
+  slots: Slots;
+  props: Record<string, any>;
+  attrs: Record<string, any>;
+  emit: Emit;
+  exposed: Record<string, unknown>;
+  proxy: any;
+  update: Function | null;
+  type: Component;
+  setupState: Record<string, any>;
+  render: Function | null;
+  subTree: VNode | null;
+  isMounted: boolean;
+  parent: ComponentInstance | null;
+  provides: Record<PropertyKey, unknown>;
+  bm: LifecycleHooksArray;
+  m: LifecycleHooksArray;
+  bu: LifecycleHooksArray;
+  u: LifecycleHooksArray;
+  bum: LifecycleHooksArray;
+  um: LifecycleHooksArray;
+  isUnmounted: boolean;
+  effect: ReactiveEffect | null;
+}
 export type PatchFunction = (
   n1: VNode | null,
   n2: VNode,
@@ -17,9 +52,15 @@ export type PatchFunction = (
   anchor?: Node | null,
   parentComponent?: ComponentInstance | null
 ) => void;
+export type UnmountFunction = (vnode: VNode) => void;
+export type UnmountComponentFunction = (
+  instance: ComponentInstance,
+  internals: ComponentRendererInternals
+) => void;
 
 export interface ComponentRendererInternals {
   patch: PatchFunction;
+  unmount: UnmountFunction;
 }
 
 let currentInstance: ComponentInstance | null = null;
@@ -35,6 +76,14 @@ const createComponentInstance = (
 ): ComponentInstance => {
   const instance: ComponentInstance = {
     vnode,
+    bm: [],
+    u: [],
+    um: [],
+    bum: [],
+    m: [],
+    bu: [],
+    isUnmounted: false,
+    effect: null,
     parent,
     provides: parent ? parent.provides : Object.create(null),
     data: {},
@@ -54,7 +103,24 @@ const createComponentInstance = (
   instance.emit = emit.bind(null, instance);
   return instance;
 };
-
+// cycle-function invoke
+function invokeLifecycleHooks(hooks: LifecycleHooksArray): void {
+  if (hooks) {
+    hooks.forEach((hook) => hook());
+  }
+}
+export const unmountComponent: UnmountComponentFunction = (instance, internals) => {
+  if (instance.isUnmounted) {
+    return;
+  }
+  invokeLifecycleHooks(instance.bum);
+  instance.isUnmounted = true;
+  instance.effect?.stop();
+  if (instance.subTree) {
+    internals.unmount(instance.subTree);
+  }
+  invokeLifecycleHooks(instance.um);
+};
 const setupComponent = (instance: ComponentInstance) => {
   initProps(instance, instance.vnode.props);
   initSlots(instance, instance.vnode.children);
@@ -163,7 +229,13 @@ const setupRenderEffect = (
   const reactiveEffect = new ReactiveEffect(componentUpdateFn, () => {
     queueJob(update);
   });
-  update = instance.update = () => reactiveEffect.run();
+  instance.effect = reactiveEffect;
+  update = instance.update = () => {
+    if (instance.isUnmounted) {
+      return;
+    }
+    reactiveEffect.run();
+  };
   update();
 };
 

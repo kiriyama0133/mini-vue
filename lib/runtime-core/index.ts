@@ -1,16 +1,22 @@
 //lib/runtime-core/index.ts
 
 import { renderOptions } from '../runtime-dom';
-import { VNode, Container, isSameVNode, isText, ComponentInstance } from './vnode';
+import { VNode, Container, isSameVNode, isText } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
 import { MiniElement } from '../runtime-dom/nodeOps';
-import { processComponent } from './component';
+import {
+  ComponentInstance,
+  ComponentRendererInternals,
+  processComponent,
+  unmountComponent,
+} from './component';
 
 export { h } from './h';
 export const Text = Symbol('Text');
 export const Fragment = Symbol('Fragnment');
 export { Teleport } from '../runtime-core/teleport';
+export { onBeforeUnmount, onUnmounted } from './apiLifecyle';
 export function createRenderer(RenderOptions: typeof renderOptions) {
   const {
     createElement: hostCreateElement,
@@ -281,7 +287,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
           processElemet(n1, n2, container, anchor, parentComponent);
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
           console.log('[patch]: component');
-          processComponent(n1, n2, container, anchor, parentComponent, { patch });
+          processComponent(n1, n2, container, anchor, parentComponent, internals);
         } else if (shapeFlag & ShapeFlags.TELEPORT) {
           type.process(n1, n2, container, anchor, {
             mountChildren,
@@ -296,13 +302,30 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     }
   };
   const unmount = (vnode: VNode) => {
+    // component
+    if (vnode.shapeFlag & ShapeFlags.COMPONENT) {
+      if (vnode.component) {
+        unmountComponent(vnode.component, internals);
+      }
+      return;
+    }
+    // Fragment
     if (vnode.type === Fragment) {
       if (vnode.children) {
         unmountChildren(vnode.children as VNode[]);
       }
       return;
     }
+    // teleport
     if (vnode.shapeFlag & ShapeFlags.TELEPORT && Array.isArray(vnode.children)) {
+      unmountChildren(vnode.children as VNode[]);
+    }
+    // element
+    if (
+      vnode.shapeFlag & ShapeFlags.ELEMENT &&
+      vnode.shapeFlag & ShapeFlags.ARRAY_CHILDREN &&
+      Array.isArray(vnode.children)
+    ) {
       unmountChildren(vnode.children as VNode[]);
     }
     if (vnode.el) {
@@ -310,16 +333,21 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
       vnode.el = null;
     }
   };
-  const render = (vnode: VNode, container: Container) => {
+  const render = (vnode: VNode | null, container: Container): void => {
     if (vnode === null) {
       if (container._vnode) {
         unmount(container._vnode);
       }
+      container._vnode = null;
+      return;
     }
     patch(container._vnode || null, vnode, container);
     container._vnode = vnode;
   };
-
+  const internals: ComponentRendererInternals = {
+    patch,
+    unmount,
+  };
   return {
     render,
   };
