@@ -1,4 +1,5 @@
 //lib/runtime-core/index.ts
+
 import { renderOptions } from '../runtime-dom';
 import { VNode, Container, isSameVNode, isText, ComponentInstance } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';

@@ -1,4 +1,5 @@
 //lib/runtime-core/h.ts
+
 import { ShapeFlags } from '../shared/shapeFlags';
 import { isObject, isString, isArray, isFunction } from '../utils/object';
 import { isTeleport } from './teleport';

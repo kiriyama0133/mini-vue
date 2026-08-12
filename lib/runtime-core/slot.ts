@@ -1,4 +1,5 @@
 //lib/runtime-core
+
 import { ShapeFlags } from '../shared/shapeFlags';
 import { ComponentInstance, isVNode, VNode, VNodeChildren } from './vnode';
 
