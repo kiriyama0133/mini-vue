@@ -15,6 +15,10 @@ export {
   Teleport,
   onBeforeUnmount,
   onUnmounted,
+  onBeforeMount,
+  onBeforeUpdate,
+  onMounted,
+  onUpdated,
 } from './runtime-core';
 
 export type { ReactiveMap } from './types/global';

@@ -131,7 +131,11 @@ const setupComponent = (instance: ComponentInstance) => {
   if (Component.data) {
     instance.data = reactive(Component.data());
   }
-
+  if (Component.mounted) {
+    instance.m.push(() => {
+      Component.mounted?.call(instance.proxy, instance.proxy);
+    });
+  }
   if (Component.setup) {
     const setupContext = {
       attrs: instance.attrs,
@@ -211,17 +215,20 @@ const setupRenderEffect = (
 ) => {
   const componentUpdateFn = () => {
     if (!instance.isMounted) {
+      invokeLifecycleHooks(instance.bm);
       const subTree = instance.render?.call(instance.proxy, instance.proxy);
       instance.subTree = subTree;
       internals.patch(null, subTree, container, anchor, instance); // render
       vnode.el = subTree.el;
       instance.isMounted = true;
-      instance.type.mounted?.call(instance.proxy, instance.proxy);
+      invokeLifecycleHooks(instance.m);
+      // instance.type.mounted?.call(instance.proxy, instance.proxy);
     } else {
       const prevTree = instance.subTree;
       const nextTree = instance.render?.call(instance.proxy, instance.proxy);
       instance.subTree = nextTree;
       internals.patch(prevTree, nextTree, container, anchor, instance); // update
+      invokeLifecycleHooks(instance.u);
     }
   };
 

@@ -11,7 +11,7 @@
         <div id="app2"></div>
     </body>
     <script type="module">
-        import { render, h, Text, Fragment, computed, ref, Teleport, onBeforeUnmount, onUnmounted } from './build/output/vue-mini.es.js'
+        import { render, h, Text, Fragment, computed, ref, Teleport,onMounted, onBeforeUnmount, onUnmounted, onBeforeMount } from './build/output/vue-mini.es.js'
         // import { render, h } from './node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
 
 //effect
@@ -204,9 +204,12 @@ const Child = {
   }
 const Parent = {
     setup(){
-        onUnmounted(() => {
+        onMounted(() => {
             console.log('after');
         });
+        onBeforeMount(() => {
+            console.log('before')
+        })
         const count = ref(1)
         const double = computed(() => count.value * 2)
         function increment() {
@@ -238,10 +241,6 @@ render(
     }),
     app
 )
-setTimeout(() => {
-    render(null, app)
-  }, 2000)
-    
     </script>
     <style>
         * {

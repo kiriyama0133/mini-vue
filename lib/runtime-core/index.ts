@@ -16,7 +16,14 @@ export { h } from './h';
 export const Text = Symbol('Text');
 export const Fragment = Symbol('Fragnment');
 export { Teleport } from '../runtime-core/teleport';
-export { onBeforeUnmount, onUnmounted } from './apiLifecyle';
+export {
+  onBeforeUnmount,
+  onUnmounted,
+  onMounted,
+  onBeforeMount,
+  onUpdated,
+  onBeforeUpdate,
+} from './apiLifecyle';
 export function createRenderer(RenderOptions: typeof renderOptions) {
   const {
     createElement: hostCreateElement,

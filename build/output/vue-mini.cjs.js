@@ -468,7 +468,15 @@ var Me = (e, t) => {
   Ne = (t) => {
     (Ce(t, t.vnode.props), Oe(t, t.vnode.children));
     let i = t.type;
-    if (((t.render = i.render ?? null), i.data && (t.data = g(i.data())), i.setup)) {
+    if (
+      ((t.render = i.render ?? null),
+      i.data && (t.data = g(i.data())),
+      i.mounted &&
+        t.m.push(() => {
+          i.mounted?.call(t.proxy, t.proxy);
+        }),
+      i.setup)
+    ) {
       let r = {
         attrs: t.attrs,
         slots: t.slots,
@@ -515,14 +523,11 @@ var Me = (e, t) => {
         if (e.isMounted) {
           let t = e.subTree,
             a = e.render?.call(e.proxy, e.proxy);
-          ((e.subTree = a), i.patch(t, a, n, r, e));
+          ((e.subTree = a), i.patch(t, a, n, r, e), K(e.u));
         } else {
+          K(e.bm);
           let a = e.render?.call(e.proxy, e.proxy);
-          ((e.subTree = a),
-            i.patch(null, a, n, r, e),
-            (t.el = a.el),
-            (e.isMounted = !0),
-            e.type.mounted?.call(e.proxy, e.proxy));
+          ((e.subTree = a), i.patch(null, a, n, r, e), (t.el = a.el), (e.isMounted = !0), K(e.m));
         }
       },
       o,
@@ -582,10 +587,10 @@ function q(e, t) {
   return typeof e == `string` ? t(e) : e && typeof e == `object` ? e : null;
 }
 var ze = (e) => !!(e && typeof e == `object` && e.__is_Teleport);
-function J({ type: e, props: t, children: n }) {
-  return Be(e, t, n);
+function Be({ type: e, props: t, children: n }) {
+  return Ve(e, t, n);
 }
-function Be(r, i, a) {
+function Ve(r, i, a) {
   let o = t(r)
       ? V.ELEMENT
       : ze(r)
@@ -604,9 +609,9 @@ function Be(r, i, a) {
       el: null,
       shapeFlag: o,
     };
-  return (Ve(s), s);
+  return (He(s), s);
 }
-function Ve(t) {
+function He(t) {
   let { children: n } = t;
   n != null &&
     (Array.isArray(n)
@@ -615,7 +620,7 @@ function Ve(t) {
         ? ((t.children = String(n)), (t.shapeFlag |= V.TEXT_CHILDREN))
         : e(n) && (t.shapeFlag |= V.SLOTS_CHILDREN));
 }
-var Y = (function (e) {
+var J = (function (e) {
   return (
     (e.BEFORE_MOUNT = `bm`),
     (e.MOUNTED = `m`),
@@ -626,20 +631,24 @@ var Y = (function (e) {
     e
   );
 })({});
-function He(e, t, n = Ae()) {
+function Ue(e, t, n = Ae()) {
   if (!n) {
     console.warn(`Lifecycle hooks can only be registered during setup()`);
     return;
   }
   n[e].push(t);
 }
-function X(e) {
+function Y(e) {
   return (t) => {
-    He(e, t);
+    Ue(e, t);
   };
 }
-var Ue = X(Y.BEFORE_UNMOUNT),
-  We = X(Y.UNMOUNTED),
+var We = Y(J.BEFORE_UNMOUNT),
+  Ge = Y(J.UNMOUNTED),
+  Ke = Y(J.BEFORE_MOUNT),
+  qe = Y(J.MOUNTED),
+  X = Y(J.BEFORE_UPDATE),
+  Je = Y(J.UPDATED),
   Z = Symbol(`Text`),
   Q = Symbol(`Fragnment`);
 function $(e) {
@@ -806,21 +815,25 @@ function $(e) {
     C = { patch: b, unmount: x };
   return { render: S };
 }
-var { render: Ge } = $(z);
+var { render: Ye } = $(z);
 ((exports.Fragment = Q),
   (exports.Teleport = Re),
   (exports.Text = Z),
   (exports.computed = oe),
   (exports.createRenderer = $),
   (exports.effect = s),
-  (exports.h = J),
+  (exports.h = Be),
   (exports.isRef = w),
-  (exports.onBeforeUnmount = Ue),
-  (exports.onUnmounted = We),
+  (exports.onBeforeMount = Ke),
+  (exports.onBeforeUnmount = We),
+  (exports.onBeforeUpdate = X),
+  (exports.onMounted = qe),
+  (exports.onUnmounted = Ge),
+  (exports.onUpdated = Je),
   (exports.proxyRefs = E),
   (exports.reactive = g),
   (exports.ref = C),
-  (exports.render = Ge),
+  (exports.render = Ye),
   (exports.renderOptions = z),
   (exports.toRef = ie),
   (exports.toRefs = ae),

@@ -16,3 +16,7 @@ export declare function injectHook(
 ): void;
 export declare const onBeforeUnmount: (hook: LifecycleHook) => void;
 export declare const onUnmounted: (hook: LifecycleHook) => void;
+export declare const onBeforeMount: (hook: LifecycleHook) => void;
+export declare const onMounted: (hook: LifecycleHook) => void;
+export declare const onBeforeUpdate: (hook: LifecycleHook) => void;
+export declare const onUpdated: (hook: LifecycleHook) => void;
