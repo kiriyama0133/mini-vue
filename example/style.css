@@ -1,0 +1,117 @@
+:root {
+  color: #243047;
+  background: #f5f7fb;
+  font-family: Inter, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  width: min(820px, calc(100% - 32px));
+  margin: 40px auto;
+}
+
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+h1 {
+  margin: 0;
+  color: #172033;
+}
+
+.card {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid #dfe5ef;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 24px rgb(34 52 82 / 6%);
+}
+
+.page > .card {
+  margin-top: 0;
+}
+
+.card-title {
+  margin-bottom: 12px;
+  color: #526077;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metric {
+  font-size: 20px;
+  font-weight: 650;
+}
+
+.toolbar,
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+button {
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  background: #5268e8;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #4156d0;
+}
+
+.badge {
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.even {
+  color: #0b7253;
+  background: #dff7ed;
+}
+
+.odd {
+  color: #a44b12;
+  background: #fff0dd;
+}
+
+.async-success,
+.teleported {
+  color: #087456;
+}
+
+.muted {
+  color: #78859a;
+}
+
+.teleport-target {
+  min-height: 46px;
+  padding: 12px;
+  border: 1px dashed #8fa0bb;
+  border-radius: 8px;
+  background: #f8faff;
+}
+
+.log {
+  margin: 0;
+  padding-left: 24px;
+  color: #59667a;
+  line-height: 1.8;
+}

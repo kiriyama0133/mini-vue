@@ -263,9 +263,9 @@ var de = {
   remove: he,
   setElementText: ge,
   setText: _e,
-  parentNode: A,
-  nextSibling: j,
-  querySelector: M,
+  parentNode: ve,
+  nextSibling: A,
+  querySelector: j,
 };
 function fe(e) {
   return document.createElement(e);
@@ -286,18 +286,18 @@ function ge(e, t) {
 function _e(e, t) {
   e.nodeValue = t;
 }
-function A(e) {
+function ve(e) {
   return e.parentNode;
 }
-function j(e) {
+function A(e) {
   return e.nextSibling;
 }
-function M(e) {
+function j(e) {
   return document.querySelector(e);
 }
 //#endregion
 //#region lib/runtime-dom/event.ts
-function N(e, t, n) {
+function M(e, t, n) {
   let r = (e._vei ||= {}),
     i = r[t];
   if (i)
@@ -308,11 +308,11 @@ function N(e, t, n) {
     }
   if (n) {
     let i = t.slice(2).toLowerCase(),
-      a = (r[t] = P(n));
+      a = (r[t] = N(n));
     e.addEventListener(i, a);
   }
 }
-function P(e) {
+function N(e) {
   let t = (e) => {
     t.value(e);
   };
@@ -320,84 +320,92 @@ function P(e) {
 }
 //#endregion
 //#region lib/runtime-dom/style.ts
-function F(e, t, n) {
+function P(e, t, n) {
   let r = e.style;
   if (n) for (let e in n) r[e] = n[e];
   if (t) for (let e in t) r[e] = '';
 }
 //#endregion
 //#region lib/runtime-dom/class.ts
-function I(e, t) {
+function F(e, t) {
   e.className = t || '';
 }
 //#endregion
 //#region lib/runtime-dom/attr.ts
-function ve(e, t, n) {
+function ye(e, t, n) {
   n == null ? e.removeAttribute(t) : e.setAttribute(t, n);
 }
 //#endregion
 //#region lib/runtime-dom/patchProps.ts
-function ye(e, t, n) {
+function be(e, t, n) {
   for (let r in n) {
     let i = t[r],
       a = n[r];
-    i !== a && L(e, r, i, a);
+    i !== a && I(e, r, i, a);
   }
   for (let r in t)
     if (!(r in n)) {
       let n = t[r];
-      L(e, r, n, null);
+      I(e, r, n, null);
     }
 }
-function L(e, t, n, r) {
+function I(e, t, n, r) {
   if (/^on[^a-z]/.test(t)) {
-    N(e, t, r);
+    M(e, t, r);
     return;
   }
   switch (t) {
     case 'class':
-      I(e, r);
+      F(e, r);
       break;
     case 'style':
-      F(e, n, r);
+      P(e, n, r);
       break;
     default:
-      ve(e, t, r);
+      ye(e, t, r);
   }
 }
 //#endregion
 //#region lib/runtime-dom/index.ts
-var R = Object.assign({ patchProp: L }, de);
+var L = Object.assign({ patchProp: I }, de);
 //#endregion
 //#region lib/runtime-core/vnode.ts
-function be(e) {
+function xe(e) {
   return e.__v_isVnode;
 }
-function z(e, t) {
+function R(e, t) {
   return e.type === t.type && e.key === t.key;
 }
-function xe(e) {
+function Se(e) {
   return e.nodeType === Node.TEXT_NODE;
 }
 //#endregion
 //#region lib/shared/shapeFlags.ts
-var B = /* @__PURE__ */ (function (e) {
-    return (
-      (e[(e.ELEMENT = 1)] = 'ELEMENT'),
-      (e[(e.FUNCTIONAL_COMPONENT = 2)] = 'FUNCTIONAL_COMPONENT'),
-      (e[(e.STATEFUL_COMPONENT = 4)] = 'STATEFUL_COMPONENT'),
-      (e[(e.TEXT_CHILDREN = 8)] = 'TEXT_CHILDREN'),
-      (e[(e.ARRAY_CHILDREN = 16)] = 'ARRAY_CHILDREN'),
-      (e[(e.SLOTS_CHILDREN = 32)] = 'SLOTS_CHILDREN'),
-      (e[(e.TELEPORT = 64)] = 'TELEPORT'),
-      (e[(e.SUSPENSE = 128)] = 'SUSPENSE'),
-      (e[(e.COMPONENT_SHOULD_KEEP_ALIVE = 256)] = 'COMPONENT_SHOULD_KEEP_ALIVE'),
-      (e[(e.COMPONENT_KEEP_ALIVE = 512)] = 'COMPONENT_KEEP_ALIVE'),
-      (e[(e.COMPONENT = 6)] = 'COMPONENT'),
-      e
-    );
-  })({}),
-  Se = (e, t) => {
+var z = /* @__PURE__ */ (function (e) {
+  return (
+    (e[(e.ELEMENT = 1)] = 'ELEMENT'),
+    (e[(e.FUNCTIONAL_COMPONENT = 2)] = 'FUNCTIONAL_COMPONENT'),
+    (e[(e.STATEFUL_COMPONENT = 4)] = 'STATEFUL_COMPONENT'),
+    (e[(e.TEXT_CHILDREN = 8)] = 'TEXT_CHILDREN'),
+    (e[(e.ARRAY_CHILDREN = 16)] = 'ARRAY_CHILDREN'),
+    (e[(e.SLOTS_CHILDREN = 32)] = 'SLOTS_CHILDREN'),
+    (e[(e.TELEPORT = 64)] = 'TELEPORT'),
+    (e[(e.SUSPENSE = 128)] = 'SUSPENSE'),
+    (e[(e.COMPONENT_SHOULD_KEEP_ALIVE = 256)] = 'COMPONENT_SHOULD_KEEP_ALIVE'),
+    (e[(e.COMPONENT_KEEP_ALIVE = 512)] = 'COMPONENT_KEEP_ALIVE'),
+    (e[(e.COMPONENT = 6)] = 'COMPONENT'),
+    e
+  );
+})({});
+//#endregion
+//#region lib/runtime-dom/object.ts
+function B(e, t) {
+  for (let n in t) e[n] = t[n];
+  for (let n in e) n in t || delete e[n];
+}
+//#endregion
+//#region lib/utils/props.ts
+var Ce = (e, t) => {
     let n = Object.keys(t);
     if (Object.keys(t).length !== Object.keys(e).length) return !0;
     for (let r = 0; r < n.length; r++) {
@@ -406,22 +414,24 @@ var B = /* @__PURE__ */ (function (e) {
     }
     return !1;
   },
-  Ce = (e, t, n) => {
-    if (Se(t, n)) {
-      for (let t in e.props) e.props[t] = n[t];
-      for (let t in e.props) t in n || delete e.props[t];
-    }
+  we = (e, t, n) => {
+    if (!Ce(t, n)) return;
+    let r = {},
+      i = {},
+      a = e.type.props || [];
+    for (let e in n) (Array.isArray(a) ? a.includes(e) : e in a) ? (r[e] = n[e]) : (i[e] = n[e]);
+    (B(e.props, r), B(e.attrs, i));
   },
-  we = (e, t) => {
+  Te = (e, t) => {
     let n = {},
       r = {},
       i = e.type.props || [];
-    for (let e in t) Array.isArray(i) && i.includes(e) ? (n[e] = t[e]) : (r[e] = t[e]);
+    for (let e in t) Array.isArray(i) ? (n[e] = t[e]) : (r[e] = t[e]);
     ((e.props = n), (e.attrs = r));
   };
 //#endregion
 //#region lib/runtime-core/emit.ts
-function Te(e, t, ...n) {
+function Ee(e, t, ...n) {
   let { props: r } = e,
     a = r[o(i(t))];
   typeof a == 'function' && a(...n);
@@ -430,36 +440,36 @@ function Te(e, t, ...n) {
 //#region lib/runtime-core/schedular.ts
 var V = [],
   H = !1,
-  Ee = Promise.resolve();
-function De() {
+  De = Promise.resolve();
+function Oe() {
   H = !1;
   let e = V.slice();
   V.length = 0;
   for (let t of e) t();
 }
-function Oe(e) {
-  (V.includes(e) || V.push(e), H || ((H = !0), Ee.then(De)));
+function ke(e) {
+  (V.includes(e) || V.push(e), H || ((H = !0), De.then(Oe)));
 }
 //#endregion
 //#region lib/runtime-core/slot.ts
-function ke(e, t) {
-  e.vnode.shapeFlag & B.SLOTS_CHILDREN && Ae(t) ? (e.slots = t) : (e.slots = {});
+function Ae(e, t) {
+  e.vnode.shapeFlag & z.SLOTS_CHILDREN && je(t) ? (e.slots = t) : (e.slots = {});
 }
-function Ae(e) {
-  return typeof e != 'object' || !e || Array.isArray(e) || be(e)
+function je(e) {
+  return typeof e != 'object' || !e || Array.isArray(e) || xe(e)
     ? !1
     : Object.values(e).every((e) => typeof e == 'function' || e === void 0);
 }
 //#endregion
 //#region lib/runtime-core/component.ts
 var U = null;
-function je() {
+function Me() {
   return U;
 }
 function W(e) {
   U = e;
 }
-var Me = (e, t) => {
+var Ne = (e, t) => {
   let n = {
     vnode: e,
     bm: [],
@@ -486,12 +496,12 @@ var Me = (e, t) => {
     subTree: null,
     isMounted: !1,
   };
-  return ((n.emit = Te.bind(null, n)), n);
+  return ((n.emit = Ee.bind(null, n)), n);
 };
 function G(e) {
   e && e.forEach((e) => e());
 }
-var Ne = (e, t) => {
+var Pe = (e, t) => {
     e.isUnmounted ||
       (G(e.bum),
       (e.isUnmounted = !0),
@@ -499,8 +509,8 @@ var Ne = (e, t) => {
       e.subTree && t.unmount(e.subTree),
       G(e.um));
   },
-  Pe = (t) => {
-    (we(t, t.vnode.props), ke(t, t.vnode.children));
+  Fe = (t) => {
+    (Te(t, t.vnode.props), Ae(t, t.vnode.children));
     let i = t.type;
     if (
       ((t.render = i.render ?? null),
@@ -552,7 +562,7 @@ var Ne = (e, t) => {
       },
     });
   },
-  Fe = (e, t, n, r, i) => {
+  Ie = (e, t, n, r, i) => {
     let a = () => {
         if (e.isMounted) {
           let t = e.subTree,
@@ -566,7 +576,7 @@ var Ne = (e, t) => {
       },
       o,
       s = new u(a, () => {
-        Oe(o);
+        ke(o);
       });
     ((e.effect = s),
       (o = e.update =
@@ -575,22 +585,22 @@ var Ne = (e, t) => {
         }),
       o());
   },
-  Ie = (e, t, n, r, i) => {
+  Le = (e, t, n, r, i) => {
     console.log('[mountComponent]: ', e);
-    let a = Me(e, r);
-    ((e.component = a), Pe(a), Fe(a, e, t, n, i));
+    let a = Ne(e, r);
+    ((e.component = a), Fe(a), Ie(a, e, t, n, i));
   },
-  Le = (e, t) => {
+  Re = (e, t) => {
     let n = (t.component = e.component);
     if (!n) throw Error('Component instance is missing');
     let r = e.props ?? {},
       i = t.props ?? {};
-    ((n.vnode = t), (t.el = e.el), Ce(n, r, i), n.update?.());
+    ((n.vnode = t), (t.el = e.el), we(n, r, i), n.update?.());
   },
-  Re = (e, t, n, r, i, a) => {
-    (console.log('[processComponent]'), e === null ? Ie(t, n, r, i, a) : Le(e, t));
+  ze = (e, t, n, r, i, a) => {
+    (console.log('[processComponent]'), e === null ? Le(t, n, r, i, a) : Re(e, t));
   },
-  ze = {
+  Be = {
     __is_Teleport: !0,
     process(e, t, n, r, i) {
       let {
@@ -620,21 +630,21 @@ var Ne = (e, t) => {
 function K(e, t) {
   return typeof e == 'string' ? t(e) : e && typeof e == 'object' ? e : null;
 }
-var Be = (e) => !!(e && typeof e == 'object' && e.__is_Teleport);
+var Ve = (e) => !!(e && typeof e == 'object' && e.__is_Teleport);
 //#endregion
 //#region lib/runtime-core/h.ts
 function q({ type: e, props: t, children: n }) {
-  return Ve(e, t, n);
+  return He(e, t, n);
 }
-function Ve(r, i, a) {
+function He(r, i, a) {
   let o = t(r)
-      ? B.ELEMENT
-      : Be(r)
-        ? B.TELEPORT
+      ? z.ELEMENT
+      : Ve(r)
+        ? z.TELEPORT
         : e(r)
-          ? B.STATEFUL_COMPONENT
+          ? z.STATEFUL_COMPONENT
           : n(r)
-            ? B.FUNCTIONAL_COMPONENT
+            ? z.FUNCTIONAL_COMPONENT
             : 0,
     s = {
       __v_isVnode: !0,
@@ -645,20 +655,20 @@ function Ve(r, i, a) {
       el: null,
       shapeFlag: o,
     };
-  return (He(s), s);
+  return (Ue(s), s);
 }
-function He(t) {
+function Ue(t) {
   let { children: n } = t;
   n != null &&
     (Array.isArray(n)
-      ? (t.shapeFlag |= B.ARRAY_CHILDREN)
+      ? (t.shapeFlag |= z.ARRAY_CHILDREN)
       : typeof n == 'string' || typeof n == 'number'
-        ? ((t.children = String(n)), (t.shapeFlag |= B.TEXT_CHILDREN))
-        : e(n) && (t.shapeFlag |= B.SLOTS_CHILDREN));
+        ? ((t.children = String(n)), (t.shapeFlag |= z.TEXT_CHILDREN))
+        : e(n) && (t.shapeFlag |= z.SLOTS_CHILDREN));
 }
 //#endregion
 //#region lib/runtime-core/defineAsyncComponent.ts
-function Ue(e) {
+function We(e) {
   return {
     expose: () => {},
     setup(t, { attrs: n, slots: r }) {
@@ -701,7 +711,7 @@ var J = /* @__PURE__ */ (function (e) {
     e
   );
 })({});
-function We(e, t, n = je()) {
+function Ge(e, t, n = Me()) {
   if (!n) {
     console.warn('Lifecycle hooks can only be registered during setup()');
     return;
@@ -710,15 +720,15 @@ function We(e, t, n = je()) {
 }
 function Y(e) {
   return (t) => {
-    We(e, t);
+    Ge(e, t);
   };
 }
-var X = Y(J.BEFORE_UNMOUNT),
-  Ge = Y(J.UNMOUNTED),
-  Ke = Y(J.BEFORE_MOUNT),
-  qe = Y(J.MOUNTED),
-  Je = Y(J.BEFORE_UPDATE),
-  Ye = Y(J.UPDATED),
+var Ke = Y(J.BEFORE_UNMOUNT),
+  qe = Y(J.UNMOUNTED),
+  X = Y(J.BEFORE_MOUNT),
+  Je = Y(J.MOUNTED),
+  Ye = Y(J.BEFORE_UPDATE),
+  Xe = Y(J.UPDATED),
   Z = Symbol('Text'),
   Q = Symbol('Fragnment');
 function $(e) {
@@ -742,14 +752,14 @@ function $(e) {
       for (; a <= o && a <= s;) {
         let r = e[a],
           o = t[a];
-        if (z(r, o)) b(r, o, n, null, i);
+        if (R(r, o)) b(r, o, n, null, i);
         else break;
         a++;
       }
       for (console.log('[diff]: ', a, o, s); a <= o && a <= s;) {
         let r = e[o],
           a = t[s];
-        if (z(r, a)) b(r, a, n, null, i);
+        if (R(r, a)) b(r, a, n, null, i);
         else break;
         (o--, s--);
       }
@@ -789,7 +799,7 @@ function $(e) {
       let { type: s, props: c, children: u, shapeFlag: d } = e,
         p = (e.el = t(s));
       if (c) for (let e in c) l(p, e, null, c[e]);
-      (d & B.TEXT_CHILDREN ? a(p, u) : d & B.ARRAY_CHILDREN && f(u, p, o), r(p, n, i));
+      (d & z.TEXT_CHILDREN ? a(p, u) : d & z.ARRAY_CHILDREN && f(u, p, o), r(p, n, i));
     },
     m = (e) => {
       e.forEach((e) => {
@@ -801,7 +811,7 @@ function $(e) {
     },
     g = (e, t, n) => {
       let r = (t.el = e.el);
-      r && (ye(r, e.props || {}, t.props || {}), _(e, t, r, n));
+      r && (be(r, e.props || {}, t.props || {}), _(e, t, r, n));
     },
     _ = (e, t, n, r) => {
       console.log('[patchChildren]: ', e, t, 'patchChildren');
@@ -809,15 +819,15 @@ function $(e) {
         o = t.children,
         s = e.shapeFlag,
         c = t.shapeFlag;
-      c & B.TEXT_CHILDREN
-        ? (s & B.ARRAY_CHILDREN && m(i), i !== o && a(n, o))
-        : c & B.ARRAY_CHILDREN
-          ? s & B.TEXT_CHILDREN
+      c & z.TEXT_CHILDREN
+        ? (s & z.ARRAY_CHILDREN && m(i), i !== o && a(n, o))
+        : c & z.ARRAY_CHILDREN
+          ? s & z.TEXT_CHILDREN
             ? (a(n, ''), f(o, n, r))
-            : s & B.ARRAY_CHILDREN && d(i, o, n, r)
-          : s & B.TEXT_CHILDREN
+            : s & z.ARRAY_CHILDREN && d(i, o, n, r)
+          : s & z.TEXT_CHILDREN
             ? a(n, '')
-            : s & B.ARRAY_CHILDREN && m(i);
+            : s & z.ARRAY_CHILDREN && m(i);
     },
     v = (e, t, i) => {
       if (e === null) {
@@ -825,7 +835,7 @@ function $(e) {
         r(e, i);
       } else {
         let n = (t.el = e.el);
-        t.children !== e.children && n && xe(n) && o(n, t.children);
+        t.children !== e.children && n && Se(n) && o(n, t.children);
       }
     },
     y = (e, t, n, r) => {
@@ -833,7 +843,7 @@ function $(e) {
     },
     b = (e, t, i, a = null, o = null) => {
       if (e === t) return;
-      e !== null && (z(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), x(e), (e = null)));
+      e !== null && (R(e, t) || (console.log('[patch<VNode>]', e, t, 'unmount'), x(e), (e = null)));
       let { type: s, shapeFlag: c } = t;
       switch (s) {
         case Z:
@@ -843,11 +853,11 @@ function $(e) {
           y(e, t, i, o);
           break;
         default:
-          c & B.ELEMENT
+          c & z.ELEMENT
             ? h(e, t, i, a, o)
-            : c & B.COMPONENT
-              ? (console.log('[patch]: component'), Re(e, t, i, a, o, C))
-              : c & B.TELEPORT &&
+            : c & z.COMPONENT
+              ? (console.log('[patch]: component'), ze(e, t, i, a, o, C))
+              : c & z.TELEPORT &&
                 s.process(e, t, i, a, {
                   mountChildren: f,
                   patchChildren: _,
@@ -860,17 +870,17 @@ function $(e) {
       }
     },
     x = (e) => {
-      if (e.shapeFlag & B.COMPONENT) {
-        e.component && Ne(e.component, C);
+      if (e.shapeFlag & z.COMPONENT) {
+        e.component && Pe(e.component, C);
         return;
       }
       if (e.type === Q) {
         e.children && m(e.children);
         return;
       }
-      (e.shapeFlag & B.TELEPORT && Array.isArray(e.children) && m(e.children),
-        e.shapeFlag & B.ELEMENT &&
-          e.shapeFlag & B.ARRAY_CHILDREN &&
+      (e.shapeFlag & z.TELEPORT && Array.isArray(e.children) && m(e.children),
+        e.shapeFlag & z.ELEMENT &&
+          e.shapeFlag & z.ARRAY_CHILDREN &&
           Array.isArray(e.children) &&
           m(e.children),
         (e.el &&= (i(e.el), null)));
@@ -888,29 +898,29 @@ function $(e) {
     };
   return { render: S };
 }
-var { render: Xe } = $(R);
+var { render: Ze } = $(L);
 //#endregion
 export {
   Q as Fragment,
-  ze as Teleport,
+  Be as Teleport,
   Z as Text,
   oe as computed,
   $ as createRenderer,
-  Ue as defineAsyncComponent,
+  We as defineAsyncComponent,
   s as effect,
   q as h,
   w as isRef,
-  Ke as onBeforeMount,
-  X as onBeforeUnmount,
-  Je as onBeforeUpdate,
-  qe as onMounted,
-  Ge as onUnmounted,
-  Ye as onUpdated,
+  X as onBeforeMount,
+  Ke as onBeforeUnmount,
+  Ye as onBeforeUpdate,
+  Je as onMounted,
+  qe as onUnmounted,
+  Xe as onUpdated,
   E as proxyRefs,
   g as reactive,
   C as ref,
-  Xe as render,
-  R as renderOptions,
+  Ze as render,
+  L as renderOptions,
   ie as toRef,
   ae as toRefs,
   le as watch,

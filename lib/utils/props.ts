@@ -1,5 +1,6 @@
 // lib/utils/props.ts
 import type { VNodeProps, ComponentInstance } from '../runtime-core/vnode';
+import { patchObject } from '../runtime-dom/object';
 
 export const hasPropsChange = (prev: VNodeProps, next: VNodeProps) => {
   let nkeys = Object.keys(next);
@@ -15,30 +16,47 @@ export const hasPropsChange = (prev: VNodeProps, next: VNodeProps) => {
   return false;
 };
 
-export const updateProps = (instance: ComponentInstance, prev: VNodeProps, next: VNodeProps) => {
-  if (hasPropsChange(prev, next)) {
-    for (let key in instance.props) {
-      instance.props[key] = next[key];
-    }
-    for (let key in instance.props) {
-      if (!(key in next)) {
-        delete instance.props[key];
-      }
+export const updateProps = (
+  instance: ComponentInstance,
+  prev: VNodeProps,
+  next: VNodeProps
+): void => {
+  if (!hasPropsChange(prev, next)) {
+    return;
+  }
+  const nextProps: Record<string, any> = {};
+  const nextAttrs: Record<string, any> = {};
+  const propsOptions = instance.type.props || [];
+  for (const key in next) {
+    const isDeclaredProp = Array.isArray(propsOptions)
+      ? propsOptions.includes(key)
+      : key in propsOptions;
+
+    if (isDeclaredProp) {
+      nextProps[key] = next[key];
+    } else {
+      nextAttrs[key] = next[key];
     }
   }
+  patchObject(instance.props, nextProps);
+  patchObject(instance.attrs, nextAttrs);
 };
 
-export const initProps = (instance: ComponentInstance, rawProps: any) => {
+export const initProps = (instance: ComponentInstance, rawProps: VNodeProps | null): void => {
   const props: Record<string, any> = {};
   const attrs: Record<string, any> = {};
   const propsOptions = instance.type.props || [];
+
   for (const key in rawProps) {
-    if (Array.isArray(propsOptions) && propsOptions.includes(key)) {
-      props[key] = rawProps[key];
+    const isDeclaredProp = Array.isArray(propsOptions);
+
+    if (isDeclaredProp) {
+      props[key] = rawProps![key];
     } else {
-      attrs[key] = rawProps[key];
+      attrs[key] = rawProps![key];
     }
   }
+
   instance.props = props;
   instance.attrs = attrs;
 };

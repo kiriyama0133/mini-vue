@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MiniVue 功能示例</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <div id="app"></div>
+
+      <section class="card teleport-card">
+        <div class="card-title">Teleport 目标</div>
+        <div id="teleport-target" class="teleport-target"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title">生命周期日志</div>
+        <ol id="lifecycle-log" class="log"></ol>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
