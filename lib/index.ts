@@ -19,6 +19,7 @@ export {
   onBeforeUpdate,
   onMounted,
   onUpdated,
+  defineAsyncComponent,
 } from './runtime-core';
 
 export type { ReactiveMap } from './types/global';

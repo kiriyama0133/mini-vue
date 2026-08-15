@@ -1,6 +1,6 @@
 //lib/runtime-core/vnode.ts
 
-import type { ComponentInstance } from './component';
+import type { Component, ComponentInstance } from './component';
 import { Emit, Expose } from './emit';
 import { Slots } from './slot';
 export type SetupProps = Readonly<Record<string, any>>;
@@ -33,7 +33,7 @@ export type VNodeOptions = {
 };
 export type RendererNode = Node;
 export type RendererElement = Element;
-export type VNodeType = string | Symbol;
+export type VNodeType = string | Symbol | Component;
 export type Container = Element & {
   _vnode?: VNode | null;
 };

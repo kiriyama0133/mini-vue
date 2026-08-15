@@ -11,7 +11,7 @@ import {
   processComponent,
   unmountComponent,
 } from './component';
-
+export { defineAsyncComponent } from './defineAsyncComponent';
 export { h } from './h';
 export const Text = Symbol('Text');
 export const Fragment = Symbol('Fragnment');

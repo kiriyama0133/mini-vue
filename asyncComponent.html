@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="app">
+        </div>
+        <div id="app2"></div>
+    </body>
+    <script type="module">
+        import { render, h, Text, Fragment, computed, ref, Teleport,onMounted, onBeforeUnmount, onUnmounted, onBeforeMount, defineAsyncComponent } from './build/output/vue-mini.es.js'
+        const container = document.querySelector('#app');
+        const AsyncChild = defineAsyncComponent(() => {
+            return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({
+                expose: () => {},
+                render() {
+                    return h({
+                    type: 'div',
+                    children: '异步组件加载完成',
+                    });
+                },
+                });
+            }, 1000);
+            });
+        });
+
+    render(
+        h({
+        type: AsyncChild,
+        }),
+        container
+    );
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</html>
