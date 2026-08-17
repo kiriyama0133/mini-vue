@@ -24,6 +24,10 @@ export function patchProps(el: MiniElement, oldProps: Props, newProps: Props) {
   }
 }
 export function patchProp(el: MiniElement, key: string, oldValue: any, newValue: any) {
+  if (key === 'key') {
+    return;
+  }
+
   if (/^on[^a-z]/.test(key)) {
     patchEvent(el, key, newValue);
     return;
