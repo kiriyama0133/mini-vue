@@ -2,8 +2,7 @@ import { renderOptions } from '../runtime-dom';
 import { VNode, Container } from './vnode';
 export { defineAsyncComponent } from './defineAsyncComponent';
 export { h } from './h';
-export declare const Text: unique symbol;
-export declare const Fragment: unique symbol;
+export { Text, Fragment } from './vnode';
 export { Teleport } from '../runtime-core/teleport';
 export {
   onBeforeUnmount,

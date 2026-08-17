@@ -19,5 +19,6 @@ export {
   onUpdated,
   defineAsyncComponent,
 } from './runtime-core';
+export { toDisplayString, createTextVNode, renderList } from './helper';
 export type { ReactiveMap } from './types/global';
 export type { Ref, ShallowUnwrapRef, ToRefs, UnwrapRef } from './ref';

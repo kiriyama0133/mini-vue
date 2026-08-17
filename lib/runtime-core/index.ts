@@ -1,7 +1,7 @@
 //lib/runtime-core/index.ts
 
 import { renderOptions } from '../runtime-dom';
-import { VNode, Container, isSameVNode, isText } from './vnode';
+import { VNode, Container, isSameVNode, isText, Text, Fragment } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { patchProps } from '../runtime-dom/patchProps';
 import { MiniElement } from '../runtime-dom/nodeOps';
@@ -13,8 +13,7 @@ import {
 } from './component';
 export { defineAsyncComponent } from './defineAsyncComponent';
 export { h } from './h';
-export const Text = Symbol('Text');
-export const Fragment = Symbol('Fragnment');
+export { Text, Fragment } from './vnode';
 export { Teleport } from '../runtime-core/teleport';
 export {
   onBeforeUnmount,

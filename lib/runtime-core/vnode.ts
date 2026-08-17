@@ -4,6 +4,8 @@ import type { Component, ComponentInstance } from './component';
 import { Emit, Expose } from './emit';
 import { Slots } from './slot';
 export type SetupProps = Readonly<Record<string, any>>;
+export const Text = Symbol('Text');
+export const Fragment = Symbol('Fragment');
 export interface SetupContext {
   attrs: Record<string, any>; // 没有被声明为 props 的属性
   slots: Slots; // 父组件传入的插槽
@@ -20,8 +22,9 @@ export interface VNode {
   shapeFlag: number;
   component?: ComponentInstance;
 }
-export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
+export type VNodeChildren = VNodeArrayChildren | VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
+export type VNodeArrayChildren = Array<VNodeChild | VNodeArrayChildren>;
 export type VNodeProps = {
   key?: string | number;
   [key: string]: any;

@@ -2,6 +2,8 @@ import { Component, ComponentInstance } from './component';
 import { Emit, Expose } from './emit';
 import { Slots } from './slot';
 export type SetupProps = Readonly<Record<string, any>>;
+export declare const Text: unique symbol;
+export declare const Fragment: unique symbol;
 export interface SetupContext {
   attrs: Record<string, any>;
   slots: Slots;
@@ -18,8 +20,9 @@ export interface VNode {
   shapeFlag: number;
   component?: ComponentInstance;
 }
-export type VNodeChildren = VNodeChild | VNodeChild[] | Slots;
+export type VNodeChildren = VNodeArrayChildren | VNodeChild | VNodeChild[] | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
+export type VNodeArrayChildren = Array<VNodeChild | VNodeArrayChildren>;
 export type VNodeProps = {
   key?: string | number;
   [key: string]: any;
