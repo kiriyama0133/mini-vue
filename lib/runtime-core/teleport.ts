@@ -1,5 +1,6 @@
 //lib/runtime-core/teleport.ts
 
+import type { ComponentInstance } from './component';
 import type { Container, VNode } from './vnode';
 
 export const Teleport = {
@@ -39,8 +40,19 @@ export const Teleport = {
   },
 };
 export interface TeleportRendererInternals {
-  mountChildren(children: VNode[], container: Container): void;
-  patchChildren(n1: VNode, n2: VNode, container: Container): void;
+  mountChildren(
+    children: VNode[],
+    container: Container,
+    parentComponent?: ComponentInstance | null,
+    anchor?: Node | null
+  ): void;
+  patchChildren(
+    n1: VNode,
+    n2: VNode,
+    container: Container,
+    parentComponent?: ComponentInstance | null,
+    parentAnchor?: Node | null
+  ): void;
   unmountChildren(children: VNode[]): void;
   createText(text: string): Node;
   insert(child: Node, parent: Node, anchor?: Node | null): void;

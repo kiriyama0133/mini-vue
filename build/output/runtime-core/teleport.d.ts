@@ -1,3 +1,4 @@
+import { ComponentInstance } from './component';
 import { Container, VNode } from './vnode';
 export declare const Teleport: {
   __is_Teleport: boolean;
@@ -10,8 +11,19 @@ export declare const Teleport: {
   ): void;
 };
 export interface TeleportRendererInternals {
-  mountChildren(children: VNode[], container: Container): void;
-  patchChildren(n1: VNode, n2: VNode, container: Container): void;
+  mountChildren(
+    children: VNode[],
+    container: Container,
+    parentComponent?: ComponentInstance | null,
+    anchor?: Node | null
+  ): void;
+  patchChildren(
+    n1: VNode,
+    n2: VNode,
+    container: Container,
+    parentComponent?: ComponentInstance | null,
+    parentAnchor?: Node | null
+  ): void;
   unmountChildren(children: VNode[]): void;
   createText(text: string): Node;
   insert(child: Node, parent: Node, anchor?: Node | null): void;

@@ -18,11 +18,12 @@ export interface VNode {
   props: VNodeProps | null;
   children: VNodeChildren;
   el: Node | null;
+  anchor?: Node | null;
   key: string | number | null;
   shapeFlag: number;
   component?: ComponentInstance;
 }
-export type VNodeChildren = VNodeArrayChildren | VNodeChild | VNodeChild[] | Slots;
+export type VNodeChildren = VNodeArrayChildren | VNodeChild | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
 export type VNodeArrayChildren = Array<VNodeChild | VNodeArrayChildren>;
 export type VNodeProps = {
@@ -40,8 +41,8 @@ export type VNodeType = string | Symbol | Component;
 export type Container = Element & {
   _vnode?: VNode | null;
 };
-export function isVNode(vnode: any): vnode is VNode {
-  return vnode.__v_isVnode;
+export function isVNode(value: unknown): value is VNode {
+  return value !== null && typeof value === 'object' && (value as VNode).__v_isVnode === true;
 }
 export function isSameVNode(n1: VNode, n2: VNode) {
   return n1.type === n2.type && n1.key === n2.key;

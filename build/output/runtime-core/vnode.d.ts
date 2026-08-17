@@ -16,11 +16,12 @@ export interface VNode {
   props: VNodeProps | null;
   children: VNodeChildren;
   el: Node | null;
+  anchor?: Node | null;
   key: string | number | null;
   shapeFlag: number;
   component?: ComponentInstance;
 }
-export type VNodeChildren = VNodeArrayChildren | VNodeChild | VNodeChild[] | Slots;
+export type VNodeChildren = VNodeArrayChildren | VNodeChild | Slots;
 export type VNodeChild = VNode | string | number | null | boolean;
 export type VNodeArrayChildren = Array<VNodeChild | VNodeArrayChildren>;
 export type VNodeProps = {
@@ -38,7 +39,7 @@ export type VNodeType = string | Symbol | Component;
 export type Container = Element & {
   _vnode?: VNode | null;
 };
-export declare function isVNode(vnode: any): vnode is VNode;
+export declare function isVNode(value: unknown): value is VNode;
 export declare function isSameVNode(n1: VNode, n2: VNode): boolean;
 export declare function isText(node: Node): node is Text;
 export type { ComponentInstance };

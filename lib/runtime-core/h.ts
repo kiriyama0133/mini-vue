@@ -11,6 +11,7 @@ import {
   VNodeOptions,
   VNodeArrayChildren,
   Text,
+  Fragment,
 } from './vnode';
 
 export function h({ type, props, children }: VNodeOptions) {
@@ -29,9 +30,9 @@ export function createVNode(type: any, props?: VNodeProps, children?: VNodeChild
   const vnode: VNode = {
     __v_isVnode: true,
     type,
-    props: props || null,
-    children: children || null,
-    key: props?.key as string | number,
+    props: props ?? null,
+    children: children ?? null,
+    key: props?.key ?? null,
     el: null,
     shapeFlag,
   };
@@ -54,8 +55,14 @@ function normalizeChildren(vnode: VNode) {
     vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
     return;
   } else if (typeof children === 'string' || typeof children === 'number') {
-    vnode.children = String(children);
-    vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
+    if (vnode.type === Fragment || vnode.shapeFlag & ShapeFlags.TELEPORT) {
+      vnode.children = [createVNode(Text, undefined, String(children))];
+      vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
+    } else {
+      vnode.children = String(children);
+      vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
+    }
+    return;
   } else if (isObject(children) && vnode.shapeFlag & ShapeFlags.COMPONENT) {
     vnode.shapeFlag |= ShapeFlags.SLOTS_CHILDREN;
   }

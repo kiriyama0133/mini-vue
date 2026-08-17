@@ -12,13 +12,12 @@
     "noEmit": true,
     "jsx": "preserve",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*", "./lib/*"]
+      "@/*": ["./lib/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["lib/**/*.ts", "lib/**/*.d.ts"],
+  "exclude": ["node_modules", "build"]
 }

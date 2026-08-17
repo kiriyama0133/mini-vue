@@ -17,6 +17,7 @@ export function patchEvent(el: MiniElement, key: string, value: Function | null)
       el.removeEventListener(eventName, existingInvoker);
       delete invokers[key];
     }
+    return;
   }
   if (value) {
     const eventName = key.slice(2).toLowerCase();
