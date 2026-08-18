@@ -26,11 +26,9 @@ export const updateProps = (
   }
   const nextProps: Record<string, any> = {};
   const nextAttrs: Record<string, any> = {};
-  const propsOptions = instance.type.props || [];
+  const propsOptions = instance.type.props;
   for (const key in next) {
-    const isDeclaredProp = Array.isArray(propsOptions)
-      ? propsOptions.includes(key)
-      : key in propsOptions;
+    const isDeclaredProp = hasDeclaredProp(propsOptions, key);
 
     if (isDeclaredProp) {
       nextProps[key] = next[key];
@@ -45,10 +43,10 @@ export const updateProps = (
 export const initProps = (instance: ComponentInstance, rawProps: VNodeProps | null): void => {
   const props: Record<string, any> = {};
   const attrs: Record<string, any> = {};
-  const propsOptions = instance.type.props || [];
+  const propsOptions = instance.type.props;
 
   for (const key in rawProps) {
-    const isDeclaredProp = Array.isArray(propsOptions);
+    const isDeclaredProp = hasDeclaredProp(propsOptions, key);
 
     if (isDeclaredProp) {
       props[key] = rawProps![key];
@@ -59,4 +57,15 @@ export const initProps = (instance: ComponentInstance, rawProps: VNodeProps | nu
 
   instance.props = props;
   instance.attrs = attrs;
+};
+
+const hasDeclaredProp = (
+  propsOptions: ComponentInstance['type']['props'],
+  key: string
+): boolean => {
+  if (!propsOptions) {
+    return false;
+  }
+
+  return Array.isArray(propsOptions) ? propsOptions.includes(key) : key in propsOptions;
 };
