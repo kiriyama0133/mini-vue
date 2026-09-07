@@ -60,10 +60,6 @@ export function track(target: object, key: string | symbol) {
   }
   trackEffects(dep);
 }
-/**
- * 依赖收集
- * @param dep 依赖集合
- */
 export function trackEffects(dep: Set<ReactiveEffect>) {
   if (dep.has(activeEffect!)) {
     return;
@@ -89,8 +85,8 @@ export function trigger(target: object, key: string | symbol) {
   const dep = depsMap.get(key);
   console.log('[trigger]', key, dep);
   if (!dep) return;
-  const effects = new Set(dep);
-  console.log('[execute]', effects);
+  // const effects = new Set(dep);
+  // console.log('[execute]', effects);
   triggerEffects(dep);
 }
 /**
