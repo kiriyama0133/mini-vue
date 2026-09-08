@@ -1,5 +1,4 @@
 // lib/runtime-dom/nodeOps.ts
-// crud actions for dom nodes...
 import type { Invoker } from './event';
 
 /**
