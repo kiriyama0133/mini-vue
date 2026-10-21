@@ -103,7 +103,7 @@ const createComponentInstance = (
   instance.emit = emit.bind(null, instance);
   return instance;
 };
-// cycle-function invoke
+// lifecycle-function invoke
 function invokeLifecycleHooks(hooks: LifecycleHooksArray): void {
   if (hooks) {
     hooks.forEach((hook) => hook());
@@ -224,6 +224,7 @@ const setupRenderEffect = (
       invokeLifecycleHooks(instance.m);
       // instance.type.mounted?.call(instance.proxy, instance.proxy);
     } else {
+      invokeLifecycleHooks(instance.bu)
       const prevTree = instance.subTree;
       const nextTree = instance.render?.call(instance.proxy, instance.proxy);
       instance.subTree = nextTree;
@@ -253,7 +254,7 @@ const mountComponent = (
   parentComponent: ComponentInstance | null,
   internals: ComponentRendererInternals
 ) => {
-  console.log('[mountComponent]: ', vnode);
+  // // console.log('[mountComponent]: ', vnode);
   const instance = createComponentInstance(vnode, parentComponent);
   vnode.component = instance;
   setupComponent(instance);
@@ -282,7 +283,7 @@ export const processComponent = (
   parentComponent: ComponentInstance | null,
   internals: ComponentRendererInternals
 ) => {
-  console.log('[processComponent]');
+  // // console.log('[processComponent]');
   if (n1 === null) {
     mountComponent(n2, container, anchor, parentComponent, internals);
   } else {

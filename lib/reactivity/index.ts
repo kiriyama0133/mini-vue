@@ -22,7 +22,6 @@ const mutableHandlers: ProxyHandler<any> = {
   },
   set(target, key, value, receiver) {
     let oldValue = Reflect.get(target, key, receiver);
-    // 相同值不需要触发更新，但赋值本身仍然是成功的。
     if (oldValue === value) return true;
     // update
     let result = Reflect.set(target, key, value, receiver);

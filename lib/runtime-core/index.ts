@@ -11,6 +11,7 @@ import {
   processComponent,
   unmountComponent,
 } from './component';
+export { provide, inject} from './inject'
 export { defineAsyncComponent } from './defineAsyncComponent';
 export { h } from './h';
 export { Text, Fragment } from './vnode';
@@ -338,7 +339,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
     }
     if (n1 !== null) {
       if (!isSameVNode(n1, n2)) {
-        console.log('[patch<VNode>]', n1, n2, 'unmount');
+        // // console.log('[patch<VNode>]', n1, n2, 'unmount');
         unmount(n1);
         n1 = null; // 原节点不复用
       }
@@ -355,7 +356,7 @@ export function createRenderer(RenderOptions: typeof renderOptions) {
         if (shapeFlag & ShapeFlags.ELEMENT) {
           processElemet(n1, n2, container, anchor, parentComponent);
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
-          console.log('[patch]: component');
+          // // console.log('[patch]: component');
           processComponent(n1, n2, container, anchor, parentComponent, internals);
         } else if (shapeFlag & ShapeFlags.TELEPORT) {
           type.process(n1, n2, container, anchor, {

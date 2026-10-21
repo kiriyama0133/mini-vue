@@ -23,6 +23,8 @@ export function provide<T>(key: InjectKey<T>, value: T): void {
 }
 export function inject<T>(key: InjectKey<T>, defaultValue?: T): T | undefined {
   const instance = getCurrentInstance();
+  const parentProvides = instance?.parent?.provides
+  if (parentProvides && key in parentProvides) return parentProvides[key] as T
   if (!instance) {
     console.warn('inject() can only be used inside setup()');
     return defaultValue;
